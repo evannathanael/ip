@@ -13,12 +13,14 @@ public class Ducky {
             + "| |_| | |_| | |___| . \\   | |  \n"
             + "|____/ \\___/ \\____|_|\\_\\  |_|  \n";
     private static final List<String> tasks = new ArrayList<>();
+    private static final List<Boolean> isDone = new ArrayList<>();
 
     /**
      * Adds a task to the existing tasks
      */
     public static void addTask(String msg) {
         tasks.add(msg);
+        isDone.add(false);
     }
 
     /**
@@ -44,9 +46,25 @@ public class Ducky {
      */
     public static void printTasks() {
         System.out.println(LINE);
+        System.out.println("Here are the tasks in your list:");
         for (int i = 0; i < tasks.size(); i++) {
-            System.out.println(String.format("%d. %s", i + 1, tasks.get(i)));
+            if (isDone.get(i)) {
+                System.out.println(String.format("%d.[X] %s", i + 1, tasks.get(i)));
+            } else {
+                System.out.println(String.format("%d.[ ] %s", i + 1, tasks.get(i)));
+            }
         }
+        System.out.println(LINE);
+    }
+
+    /**
+     * Marks a task as done and prints the state and description of the task
+     */
+    public static void markAsDone(int taskNumber) {
+        System.out.println(LINE);
+        System.out.println("Nice! I've marked this task as done:");
+        isDone.set(taskNumber - 1, true);
+        System.out.println(String.format("[X] %s", tasks.get(taskNumber - 1)));
         System.out.println(LINE);
     }
 
@@ -60,15 +78,25 @@ public class Ducky {
         Scanner scanner = new Scanner(System.in);
         while (true) {
             String msg = scanner.nextLine();
-            if (msg.equals("bye")) {
-                break;
-            } else if (msg.equals("list")) {
-                printTasks();
-            } else {
-                addTask(msg);
-                printEchoMessage(msg);
+            switch (msg) {
+                case "bye":
+                    printExitMessage();
+                    return;
+
+                case "list":
+                    printTasks();
+                    break;
+
+                default:
+                    if (msg.startsWith("mark ")) {
+                        int taskNumber = Integer.parseInt(msg.substring(5));
+                        markAsDone(taskNumber);
+                    } else {
+                        addTask(msg);
+                        printEchoMessage(msg);
+                    }
+                    break;
             }
         }
-        printExitMessage();
     }
 }
