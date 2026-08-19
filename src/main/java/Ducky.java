@@ -68,6 +68,17 @@ public class Ducky {
         System.out.println(LINE);
     }
 
+    /**
+     * Unmarks a task and prints the state and description of the task
+     */
+    public static void unmark(int taskNumber) {
+        System.out.println(LINE);
+        System.out.println("OK, I've marked this task as not done yet:");
+        isDone.set(taskNumber - 1, false);
+        System.out.println(String.format("[ ] %s", tasks.get(taskNumber - 1)));
+        System.out.println(LINE);
+    }
+
     public static void main(String[] args) {
         System.out.println(LINE);
         System.out.println(BANNER);
@@ -91,6 +102,9 @@ public class Ducky {
                     if (msg.startsWith("mark ")) {
                         int taskNumber = Integer.parseInt(msg.substring(5));
                         markAsDone(taskNumber);
+                    } else if (msg.startsWith("unmark ")) {
+                        int taskNumber = Integer.parseInt(msg.substring(7));
+                        unmark(taskNumber);
                     } else {
                         addTask(msg);
                         printEchoMessage(msg);
