@@ -12,15 +12,14 @@ public class Ducky {
             + "| | | | | | | |   | ' /  \\ V / \n"
             + "| |_| | |_| | |___| . \\   | |  \n"
             + "|____/ \\___/ \\____|_|\\_\\  |_|  \n";
-    private static final List<String> tasks = new ArrayList<>();
-    private static final List<Boolean> isDone = new ArrayList<>();
+    private static final List<Task> tasks = new ArrayList<>();
 
     /**
      * Adds a task to the existing tasks
      */
     public static void addTask(String msg) {
-        tasks.add(msg);
-        isDone.add(false);
+        Task task = new Task(msg);
+        tasks.add(task);
     }
 
     /**
@@ -48,11 +47,8 @@ public class Ducky {
         System.out.println(LINE);
         System.out.println("Here are the tasks in your list:");
         for (int i = 0; i < tasks.size(); i++) {
-            if (isDone.get(i)) {
-                System.out.println(String.format("%d.[X] %s", i + 1, tasks.get(i)));
-            } else {
-                System.out.println(String.format("%d.[ ] %s", i + 1, tasks.get(i)));
-            }
+            Task task = tasks.get(i);
+            System.out.println(String.format("%d.%s", i + 1, task));
         }
         System.out.println(LINE);
     }
@@ -63,8 +59,8 @@ public class Ducky {
     public static void markAsDone(int taskNumber) {
         System.out.println(LINE);
         System.out.println("Nice! I've marked this task as done:");
-        isDone.set(taskNumber - 1, true);
-        System.out.println(String.format("[X] %s", tasks.get(taskNumber - 1)));
+        tasks.get(taskNumber - 1).markAsDone();
+        System.out.println("  " + tasks.get(taskNumber - 1));
         System.out.println(LINE);
     }
 
@@ -74,8 +70,8 @@ public class Ducky {
     public static void unmark(int taskNumber) {
         System.out.println(LINE);
         System.out.println("OK, I've marked this task as not done yet:");
-        isDone.set(taskNumber - 1, false);
-        System.out.println(String.format("[ ] %s", tasks.get(taskNumber - 1)));
+        tasks.get(taskNumber - 1).unmark();
+        System.out.println("  " + tasks.get(taskNumber - 1));
         System.out.println(LINE);
     }
 
