@@ -17,20 +17,15 @@ public class Ducky {
     /**
      * Adds a task to the existing tasks
      */
-    public static void addTask(String msg) {
-        Task task = new Task(msg);
+    public static void addTask(Task task) {
         tasks.add(task);
-    }
-
-    /**
-     * Prints the chatbot's response surrounded by separator lines.
-     */
-    public static void printEchoMessage(String msg) {
         System.out.println(LINE);
-        System.out.println("added: " + msg);
+        System.out.println("Got it. I've added this task:");
+        System.out.println("  " + task);
+        System.out.println(String.format("Now you have %d tasks in the list.", tasks.size()));
         System.out.println(LINE);
     }
-
+    
     /**
      * Prints the chatbot's exit response.
      */
@@ -101,12 +96,37 @@ public class Ducky {
                     } else if (msg.startsWith("unmark ")) {
                         int taskNumber = Integer.parseInt(msg.substring(7));
                         unmark(taskNumber);
+                    } else if (msg.startsWith("todo ")){
+                        String description = msg.substring(5);
+                        addTask(new ToDo(description));
+                    } else if (msg.startsWith("deadline ")){
+                        String prefix = "deadline ";
+                        String marker = " /by ";
+
+                        int markerIndex = msg.indexOf(marker);
+
+                        String description = msg.substring(prefix.length(), markerIndex);
+                        String by = msg.substring(markerIndex + marker.length());
+
+                        addTask(new Deadline(description, by));
+                    } else if (msg.startsWith("event ")) {
+                        String prefix = "event ";
+                        String fromMarker = " /from ";
+                        String toMarker = " /to ";
+
+                        int fromIndex = msg.indexOf(fromMarker);
+                        int toIndex = msg.indexOf(toMarker);
+
+                        String description = msg.substring(prefix.length(), fromIndex);
+                        String start = msg.substring(fromIndex + fromMarker.length(), toIndex);
+                        String end = msg.substring(toIndex + toMarker.length());
+
+                        addTask(new Event(description, start, end));
                     } else {
-                        addTask(msg);
-                        printEchoMessage(msg);
+                        // Do nothing for now
                     }
                     break;
-            }
+                }
         }
     }
 }
