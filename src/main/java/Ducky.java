@@ -71,6 +71,18 @@ public class Ducky {
     }
 
     /**
+     * Delete a task from tasks
+     */
+    public static void delete(int taskNumber) {
+        System.out.println(LINE);
+        System.out.println("Noted. I've removed this task:");
+        System.out.println("  " + tasks.get(taskNumber - 1));
+        tasks.remove(taskNumber - 1);
+        System.out.println(String.format("Now you have %d tasks in the list.", tasks.size()));
+        System.out.println(LINE);
+    }
+
+    /**
      * Unmarks a task and prints the state and description of the task
      */
     public static void printErrorMessage(String msg) {
@@ -187,6 +199,9 @@ public class Ducky {
                     }
 
                     addTask(new Event(description, start, end));
+                } else if (msg.startsWith("delete ")) {
+                    int taskNumber = getTaskNumber(msg, "delete ");
+                    delete(taskNumber);
                 } else {
                     throw new DuckyException("I didn't get what you said 🐥");
                 }
@@ -197,7 +212,7 @@ public class Ducky {
     public static void main(String[] args) {
         System.out.println(LINE);
         System.out.println(BANNER);
-        System.out.println("Hello! I'm Ducky.");
+        System.out.println("Hello! I'm Ducky 🐥");
         System.out.println("What can I do for you?");
         System.out.println(LINE);
 
