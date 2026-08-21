@@ -70,6 +70,130 @@ public class Ducky {
         System.out.println(LINE);
     }
 
+    /**
+     * Unmarks a task and prints the state and description of the task
+     */
+    public static void printErrorMessage(String msg) {
+        System.out.println(LINE);
+        System.out.println("QUACK! " + msg);
+        System.out.println(LINE);
+    }
+
+    /**
+     * Parses and validates a task number from a mark or unmark command.
+     */
+    public static int getTaskNumber(String msg, String command) throws DuckyException {
+        String numberText = msg.substring(command.length()).trim();
+        int taskNumber;
+
+        try {
+            taskNumber = Integer.parseInt(numberText);
+        } catch (NumberFormatException e) {
+            throw new DuckyException("Please enter a valid task number 🐥");
+        }
+
+        if (taskNumber < 1 || taskNumber > tasks.size()) {
+            throw new DuckyException("That task number does not exist 🐥");
+        }
+
+        return taskNumber;
+    }
+
+    /**
+     * Processes one user command and throws a DuckyException for invalid input.
+     */
+    public static boolean processCommand(String msg) throws DuckyException {
+        switch (msg) {
+            case "bye":
+                printExitMessage();
+                return false;
+
+            case "list":
+                printTasks();
+                return true;
+
+            default:
+                if (msg.startsWith("mark ")) {
+                    int taskNumber = getTaskNumber(msg, "mark ");
+                    markAsDone(taskNumber);
+                } else if (msg.startsWith("unmark ")) {
+                    int taskNumber = getTaskNumber(msg, "unmark ");
+                    unmark(taskNumber);
+                } else if (msg.equals("todo") || msg.startsWith("todo ")) {
+                    if (msg.equals("todo")) {
+                        throw new DuckyException("A todo description cannot be empty 🐥");
+                    }
+
+                    String description = msg.substring(4).trim();
+                    if (description.isEmpty()) {
+                        throw new DuckyException("To do task is empty! 🐥");
+                    }
+                    addTask(new ToDo(description));
+                } else if (msg.equals("deadline") || msg.startsWith("deadline ")) {
+                    if (msg.equals("deadline")) {
+                        throw new DuckyException("A deadline description cannot be empty 🐥");
+                    }
+
+                    int markerIndex = msg.indexOf(" /by ");
+
+                    if (markerIndex == -1) {
+                        throw new DuckyException("A deadline must include '/by' followed by a date or time 🐥");
+                    }
+
+                    String description = msg.substring("deadline ".length(), markerIndex).trim();
+                    String by = msg.substring(markerIndex + " /by ".length()).trim();
+
+                    if (description.isEmpty()) {
+                        throw new DuckyException("A deadline description cannot be empty 🐥");
+                    }
+
+                    if (by.isEmpty()) {
+                        throw new DuckyException("A deadline must include a date or time after '/by' 🐥");
+                    }
+
+                    addTask(new Deadline(description, by));
+                } else if (msg.equals("event") || msg.startsWith("event ")) {
+                    if (msg.equals("event")) {
+                        throw new DuckyException("An event description cannot be empty 🐥");
+                    }
+
+                    int fromIndex = msg.indexOf(" /from ");
+                    int toIndex = msg.indexOf(" /to ");
+
+                    if (fromIndex == -1 || toIndex == -1) {
+                        throw new DuckyException(
+                                "An event must include both '/from' and '/to' 🐥");
+                    }
+
+                    if (fromIndex > toIndex) {
+                        throw new DuckyException(
+                                "'/from' must appear before '/to' 🐥");
+                    }
+
+                    String description = msg.substring("event ".length(), fromIndex).trim();
+                    String start = msg.substring(fromIndex + " /from ".length(), toIndex).trim();
+                    String end = msg.substring(toIndex + " /to ".length()).trim();
+
+                    if (description.isEmpty()) {
+                        throw new DuckyException("An event description cannot be empty 🐥");
+                    }
+
+                    if (start.isEmpty()) {
+                        throw new DuckyException("An event must include a start time after '/from' 🐥");
+                    }
+
+                    if (end.isEmpty()) {
+                        throw new DuckyException("An event must include an end time after '/to'🐥");
+                    }
+
+                    addTask(new Event(description, start, end));
+                } else {
+                    throw new DuckyException("I didn't get what you said 🐥");
+                }
+        }
+        return true;
+    }
+
     public static void main(String[] args) {
         System.out.println(LINE);
         System.out.println(BANNER);
@@ -80,53 +204,13 @@ public class Ducky {
         Scanner scanner = new Scanner(System.in);
         while (true) {
             String msg = scanner.nextLine();
-            switch (msg) {
-                case "bye":
-                    printExitMessage();
+            try {
+                if (!processCommand(msg)) {
                     return;
-
-                case "list":
-                    printTasks();
-                    break;
-
-                default:
-                    if (msg.startsWith("mark ")) {
-                        int taskNumber = Integer.parseInt(msg.substring(5));
-                        markAsDone(taskNumber);
-                    } else if (msg.startsWith("unmark ")) {
-                        int taskNumber = Integer.parseInt(msg.substring(7));
-                        unmark(taskNumber);
-                    } else if (msg.startsWith("todo ")){
-                        String description = msg.substring(5);
-                        addTask(new ToDo(description));
-                    } else if (msg.startsWith("deadline ")){
-                        String prefix = "deadline ";
-                        String marker = " /by ";
-
-                        int markerIndex = msg.indexOf(marker);
-
-                        String description = msg.substring(prefix.length(), markerIndex);
-                        String by = msg.substring(markerIndex + marker.length());
-
-                        addTask(new Deadline(description, by));
-                    } else if (msg.startsWith("event ")) {
-                        String prefix = "event ";
-                        String fromMarker = " /from ";
-                        String toMarker = " /to ";
-
-                        int fromIndex = msg.indexOf(fromMarker);
-                        int toIndex = msg.indexOf(toMarker);
-
-                        String description = msg.substring(prefix.length(), fromIndex);
-                        String start = msg.substring(fromIndex + fromMarker.length(), toIndex);
-                        String end = msg.substring(toIndex + toMarker.length());
-
-                        addTask(new Event(description, start, end));
-                    } else {
-                        // Do nothing for now
-                    }
-                    break;
                 }
+            } catch (DuckyException e) {
+                printErrorMessage(e.getMessage());
+            }
         }
     }
 }
