@@ -8,9 +8,7 @@ import java.util.Locale;
  * Represents a task with a due date.
  */
 public class Deadline extends Task {
-    private static final DateTimeFormatter DISPLAY_FORMAT =
-            DateTimeFormatter.ofPattern("MMM dd yyyy", Locale.ENGLISH);
-
+    private static final DateTimeFormatter DISPLAY_FORMAT = DateTimeFormatter.ofPattern("MMM dd yyyy", Locale.ENGLISH);
     protected final LocalDate by;
 
     /**
