@@ -8,8 +8,7 @@ import java.util.Locale;
  * Represents a task with a start and end time/date.
  */
 public class Event extends Task {
-    private static final DateTimeFormatter DISPLAY_FORMAT =
-            DateTimeFormatter.ofPattern("MMM dd yyyy h:mm a", Locale.ENGLISH);
+    private static final DateTimeFormatter DISPLAY_FORMAT = DateTimeFormatter.ofPattern("MMM dd yyyy h:mm a", Locale.ENGLISH);
 
     protected final LocalDateTime start;
     protected final LocalDateTime end;

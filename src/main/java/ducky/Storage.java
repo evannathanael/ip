@@ -1,12 +1,12 @@
 package ducky;
 
 import java.io.IOException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeParseException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,10 +22,12 @@ public class Storage {
     private final Path filePath;
 
     /**
-     * Creates storage that uses {@code data/duke.txt} as its data file.
+     * Creates storage that uses the given data file.
+     *
+     * @param filePath the path of the data file
      */
-    public Storage() {
-        filePath = Paths.get("data", "duke.txt");
+    public Storage(String filePath) {
+        this.filePath = Paths.get(filePath);
     }
 
     /**
@@ -58,7 +60,7 @@ public class Storage {
      * @param tasks the tasks to save
      * @throws DuckyException if the directory or file cannot be written
      */
-    public void save(List<Task> tasks) throws DuckyException {
+    public void save(TaskList taskList) throws DuckyException {
         try {
             Path parentDirectory = filePath.getParent();
             if (parentDirectory != null) {
@@ -66,7 +68,7 @@ public class Storage {
             }
 
             List<String> lines = new ArrayList<>();
-            for (Task task : tasks) {
+            for (Task task : taskList.getTasks()) {
                 lines.add(formatTask(task));
             }
             Files.write(filePath, lines);
