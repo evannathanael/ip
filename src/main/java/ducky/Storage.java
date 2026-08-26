@@ -1,6 +1,9 @@
 package ducky;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -97,13 +100,23 @@ public class Storage {
             if (fields.length != 4) {
                 throw new DuckyException("Sorry, your save file contains invalid deadline data 🐥");
             }
-            task = new Deadline(fields[2], fields[3]);
+            try {
+                task = new Deadline(fields[2], LocalDate.parse(fields[3]));
+            } catch (DateTimeParseException e) {
+                throw new DuckyException("Sorry, your save file contains an invalid deadline date 🐥");
+            }
             break;
         case EVENT_TYPE:
             if (fields.length != 5) {
                 throw new DuckyException("Sorry, your save file contains invalid event data 🐥");
             }
-            task = new Event(fields[2], fields[3], fields[4]);
+            try {
+                LocalDateTime start = LocalDateTime.parse(fields[3]);
+                LocalDateTime end = LocalDateTime.parse(fields[4]);
+                task = new Event(fields[2], start, end);
+            } catch (DateTimeParseException e) {
+                throw new DuckyException("Sorry, your save file contains invalid event times 🐥");
+            }
             break;
         default:
             throw new DuckyException("Sorry, your save file contains an unknown task type 🐥");
@@ -141,10 +154,10 @@ public class Storage {
             return String.join(" | ", TODO_TYPE, status, task.getDescription());
         } else if (task instanceof Deadline deadline) {
             return String.join(" | ", DEADLINE_TYPE, status,
-                    task.getDescription(), deadline.getBy());
+                    task.getDescription(), deadline.getBy().toString());
         } else if (task instanceof Event event) {
             return String.join(" | ", EVENT_TYPE, status,
-                    task.getDescription(), event.getStart(), event.getEnd());
+                    task.getDescription(), event.getStart().toString(), event.getEnd().toString());
         }
         throw new DuckyException("Sorry, I could not save an unsupported task type 🐥");
     }
