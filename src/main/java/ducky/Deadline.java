@@ -1,10 +1,17 @@
 package ducky;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
+
 /**
  * Represents a task with a due date.
  */
 public class Deadline extends Task {
-    protected final String by;
+    private static final DateTimeFormatter DISPLAY_FORMAT =
+            DateTimeFormatter.ofPattern("MMM dd yyyy", Locale.ENGLISH);
+
+    protected final LocalDate by;
 
     /**
      * Creates a deadline task with the given description and due date.
@@ -12,7 +19,7 @@ public class Deadline extends Task {
      * @param description the description of the task
      * @param by the due date or time
      */
-    public Deadline(String description, String by) {
+    public Deadline(String description, LocalDate by) {
         super(description);
         this.by = by;
     }
@@ -22,12 +29,12 @@ public class Deadline extends Task {
      *
      * @return the deadline
      */
-    public String getBy() {
+    public LocalDate getBy() {
         return by;
     }
 
     @Override
     public String toString() {
-        return "[D]" + super.toString() + " (by: " + by + ")";
+        return "[D]" + super.toString() + " (by: " + by.format(DISPLAY_FORMAT) + ")";
     }
 }

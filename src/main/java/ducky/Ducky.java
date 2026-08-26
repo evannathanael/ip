@@ -1,5 +1,9 @@
 package ducky;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -14,7 +18,8 @@ public class Ducky {
             + "| | | | | | | |   | ' /  \\ V / \n"
             + "| |_| | |_| | |___| . \\   | |  \n"
             + "|____/ \\___/ \\____|_|\\_\\  |_|  \n";
-
+    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm");
     private final Storage storage;
     private final List<Task> tasks;
 
@@ -236,7 +241,14 @@ public class Ducky {
             throw new DuckyException("A deadline must include a date or time after '/by' 🐥");
         }
 
-        addTask(new Deadline(description, by));
+        LocalDate deadlineDate;
+        try {
+            deadlineDate = LocalDate.parse(by, DATE_FORMAT);
+        } catch (DateTimeParseException e) {
+            throw new DuckyException("Please enter the deadline in yyyy-MM-dd format 🐥");
+        }
+
+        addTask(new Deadline(description, deadlineDate));
     }
 
     /**
@@ -271,7 +283,18 @@ public class Ducky {
             throw new DuckyException("An event must include an end time after '/to'🐥");
         }
 
-        addTask(new Event(description, start, end));
+        LocalDateTime eventStart;
+        LocalDateTime eventEnd;
+
+        try {
+            eventStart = LocalDateTime.parse(start, DATE_TIME_FORMAT);
+            eventEnd = LocalDateTime.parse(end, DATE_TIME_FORMAT);
+        } catch (DateTimeParseException e) {
+            throw new DuckyException(
+                    "Please enter event times in yyyy-MM-dd HHmm format 🐥");
+        }
+
+        addTask(new Event(description, eventStart, eventEnd));
     }
 
     /**
