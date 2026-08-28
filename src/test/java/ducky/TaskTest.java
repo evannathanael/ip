@@ -1,10 +1,12 @@
 package ducky;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.List;
+
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link Task}.
@@ -112,5 +114,19 @@ class TaskTest {
         task.markAsDone();
 
         assertEquals("[X] read book", task.toString());
+    }
+
+    @Test
+    void find_keywordMatchingDescriptions_matchingTasksReturned() {
+        TaskList tasks = new TaskList(List.of(
+                new ToDo("Read a book"),
+                new ToDo("Buy groceries"),
+                new ToDo("Return the BOOK")));
+
+        List<Task> matchingTasks = tasks.find("book");
+
+        assertEquals(2, matchingTasks.size());
+        assertEquals("Read a book", matchingTasks.get(0).getDescription());
+        assertEquals("Return the BOOK", matchingTasks.get(1).getDescription());
     }
 }

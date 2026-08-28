@@ -1,13 +1,13 @@
 package ducky;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Tests for the command parsing behavior of {@link Parser}.
@@ -20,6 +20,14 @@ class ParserTest {
     void parse_simpleCommand_correctCommandTypeReturned() throws DuckyException {
         assertEquals(Parser.CommandType.BYE, parser.parse("bye").getType());
         assertEquals(Parser.CommandType.LIST, parser.parse("list").getType());
+    }
+
+    @Test
+    void parse_findCommand_keywordReturned() throws DuckyException {
+        Parser.ParsedCommand parsed = parser.parse("find Book");
+
+        assertEquals(Parser.CommandType.FIND, parsed.getType());
+        assertEquals("Book", parsed.getKeyword());
     }
 
     @Test
@@ -74,6 +82,12 @@ class ParserTest {
     void parse_invalidTaskNumbers_exceptionThrown() {
         assertThrows(DuckyException.class, () -> parser.parse("mark 0"));
         assertThrows(DuckyException.class, () -> parser.parse("delete abc"));
+    }
+
+    @Test
+    void parse_emptyFindKeyword_exceptionThrown() {
+        assertThrows(DuckyException.class, () -> parser.parse("find"));
+        assertThrows(DuckyException.class, () -> parser.parse("find   "));
     }
 
     @Test

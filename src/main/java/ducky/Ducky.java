@@ -70,6 +70,9 @@ public class Ducky {
         case LIST:
             ui.showTasks(tasks);
             return true;
+        case FIND:
+            ui.showMatchingTasks(tasks.find(parsedCommand.getKeyword()));
+            return true;
         case ADD:
             tasks.add(parsedCommand.getTask());
             ui.showTaskAdded(parsedCommand.getTask(), tasks.size());
