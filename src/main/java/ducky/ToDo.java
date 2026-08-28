@@ -13,6 +13,11 @@ public class ToDo extends Task {
         super(description);
     }
 
+    /**
+     * Returns this to-do task in Ducky's display format.
+     *
+     * @return the formatted to-do task
+     */
     @Override
     public String toString() {
         return "[T]" + super.toString();

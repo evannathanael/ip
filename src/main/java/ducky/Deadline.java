@@ -31,6 +31,11 @@ public class Deadline extends Task {
         return by;
     }
 
+    /**
+     * Returns this deadline in Ducky's display format.
+     *
+     * @return the formatted deadline
+     */
     @Override
     public String toString() {
         return "[D]" + super.toString() + " (by: " + by.format(DISPLAY_FORMAT) + ")";
