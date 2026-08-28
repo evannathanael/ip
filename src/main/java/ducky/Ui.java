@@ -36,7 +36,7 @@ public class Ui {
     /**
      * Reads one command from the user.
      *
-     * @return the user's command
+     * @return the user's command.
      */
     public String readCommand() {
         return scanner.nextLine();
@@ -54,8 +54,8 @@ public class Ui {
     /**
      * Displays the task-added confirmation.
      *
-     * @param task the added task
-     * @param taskCount the number of tasks after adding
+     * @param task the added task.
+     * @param taskCount the number of tasks after adding.
      */
     public void showTaskAdded(Task task, int taskCount) {
         System.out.println(LINE);
@@ -68,7 +68,7 @@ public class Ui {
     /**
      * Displays all tasks.
      *
-     * @param tasks the tasks to display
+     * @param tasks the tasks to display.
      */
     public void showTasks(TaskList tasks) {
         System.out.println(LINE);
@@ -82,7 +82,7 @@ public class Ui {
     /**
      * Displays a task-marked-as-done confirmation.
      *
-     * @param task the updated task
+     * @param task the updated task.
      */
     public void showTaskMarkedAsDone(Task task) {
         System.out.println(LINE);
@@ -94,7 +94,7 @@ public class Ui {
     /**
      * Displays a task-unmarked confirmation.
      *
-     * @param task the updated task
+     * @param task the updated task.
      */
     public void showTaskUnmarked(Task task) {
         System.out.println(LINE);
@@ -106,8 +106,8 @@ public class Ui {
     /**
      * Displays a task-deleted confirmation.
      *
-     * @param task the deleted task
-     * @param taskCount the number of tasks after deletion
+     * @param task the deleted task.
+     * @param taskCount the number of tasks after deletion.
      */
     public void showTaskDeleted(Task task, int taskCount) {
         System.out.println(LINE);
@@ -120,7 +120,7 @@ public class Ui {
     /**
      * Displays an error message.
      *
-     * @param message the user-facing error message
+     * @param message the user-facing error message.
      */
     public void showError(String message) {
         System.out.println(LINE);

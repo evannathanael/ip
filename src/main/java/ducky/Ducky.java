@@ -14,7 +14,7 @@ public class Ducky {
     /**
      * Creates a chatbot using the given data file.
      *
-     * @param filePath the path of the task data file
+     * @param filePath the path of the task data file.
      */
     public Ducky(String filePath) {
         ui = new Ui();
@@ -26,7 +26,7 @@ public class Ducky {
     /**
      * Loads saved tasks, falling back to an empty task list if loading fails.
      *
-     * @return the loaded task list
+     * @return the loaded task list.
      */
     private TaskList loadTasks() {
         try {
@@ -57,9 +57,9 @@ public class Ducky {
     /**
      * Parses and executes one user command.
      *
-     * @param command the user's command
-     * @return {@code false} when the chatbot should exit, otherwise {@code true}
-     * @throws DuckyException if the command is invalid or cannot be saved
+     * @param command the user's command.
+     * @return {@code false} when the chatbot should exit, otherwise {@code true}.
+     * @throws DuckyException if the command is invalid or cannot be saved.
      */
     private boolean processCommand(String command) throws DuckyException {
         Parser.ParsedCommand parsedCommand = parser.parse(command);
@@ -100,9 +100,9 @@ public class Ducky {
     /**
      * Returns the task at a parsed index after checking that it exists.
      *
-     * @param index the zero-based task index
-     * @return the task at the index
-     * @throws DuckyException if the index does not identify a task
+     * @param index the zero-based task index.
+     * @return the task at the index.
+     * @throws DuckyException if the index does not identify a task.
      */
     private Task getTask(int index) throws DuckyException {
         if (index < 0 || index >= tasks.size()) {
@@ -114,7 +114,7 @@ public class Ducky {
     /**
      * Starts Ducky with the default data file.
      *
-     * @param args command-line arguments, which are currently unused
+     * @param args command-line arguments, which are currently unused.
      */
     public static void main(String[] args) {
         new Ducky(DATA_FILE_PATH).run();

@@ -9,13 +9,13 @@ import java.util.Locale;
  */
 public class Deadline extends Task {
     private static final DateTimeFormatter DISPLAY_FORMAT = DateTimeFormatter.ofPattern("MMM dd yyyy", Locale.ENGLISH);
-    protected final LocalDate by;
+    private final LocalDate by;
 
     /**
      * Creates a deadline task with the given description and due date.
      *
-     * @param description the description of the task
-     * @param by the due date or time
+     * @param description the description of the task.
+     * @param by the due date or time.
      */
     public Deadline(String description, LocalDate by) {
         super(description);
@@ -25,7 +25,7 @@ public class Deadline extends Task {
     /**
      * Returns the due date or time for this task.
      *
-     * @return the deadline
+     * @return the deadline.
      */
     public LocalDate getBy() {
         return by;
@@ -34,7 +34,7 @@ public class Deadline extends Task {
     /**
      * Returns this deadline in Ducky's display format.
      *
-     * @return the formatted deadline
+     * @return the formatted deadline.
      */
     @Override
     public String toString() {
