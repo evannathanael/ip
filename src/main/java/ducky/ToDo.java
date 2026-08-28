@@ -7,7 +7,7 @@ public class ToDo extends Task {
     /**
      * Creates a to-do task with the given description.
      *
-     * @param description the description of the task
+     * @param description the description of the task.
      */
     public ToDo(String description) {
         super(description);
@@ -16,7 +16,7 @@ public class ToDo extends Task {
     /**
      * Returns this to-do task in Ducky's display format.
      *
-     * @return the formatted to-do task
+     * @return the formatted to-do task.
      */
     @Override
     public String toString() {

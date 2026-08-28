@@ -15,9 +15,9 @@ public class Parser {
     /**
      * Parses a complete user command.
      *
-     * @param command the user's command
-     * @return the parsed command
-     * @throws DuckyException if the command is invalid
+     * @param command the user's command.
+     * @return the parsed command.
+     * @throws DuckyException if the command is invalid.
      */
     public ParsedCommand parse(String command) throws DuckyException {
         if ("bye".equals(command)) {
@@ -50,9 +50,9 @@ public class Parser {
     /**
      * Parses a todo command.
      *
-     * @param command the complete todo command
-     * @return the parsed todo task
-     * @throws DuckyException if the description is empty
+     * @param command the complete todo command.
+     * @return the parsed todo task.
+     * @throws DuckyException if the description is empty.
      */
     private Task parseTodo(String command) throws DuckyException {
         String description = command.substring("todo".length()).trim();
@@ -65,9 +65,9 @@ public class Parser {
     /**
      * Parses a deadline command and converts its date to a LocalDate.
      *
-     * @param command the complete deadline command
-     * @return the parsed deadline task
-     * @throws DuckyException if the command or date is invalid
+     * @param command the complete deadline command.
+     * @return the parsed deadline task.
+     * @throws DuckyException if the command or date is invalid.
      */
     private Task parseDeadline(String command) throws DuckyException {
         String commandWithoutPrefix = command.substring("deadline".length()).trim();
@@ -95,9 +95,9 @@ public class Parser {
     /**
      * Parses an event command and converts its times to LocalDateTime values.
      *
-     * @param command the complete event command
-     * @return the parsed event task
-     * @throws DuckyException if the command or times are invalid
+     * @param command the complete event command.
+     * @return the parsed event task.
+     * @throws DuckyException if the command or times are invalid.
      */
     private Task parseEvent(String command) throws DuckyException {
         String commandWithoutPrefix = command.substring("event".length()).trim();
@@ -136,10 +136,10 @@ public class Parser {
     /**
      * Parses a one-based task number and converts it to a zero-based index.
      *
-     * @param command the complete task command
-     * @param commandPrefix the command prefix to remove
-     * @return the zero-based task index
-     * @throws DuckyException if the task number is invalid
+     * @param command the complete task command.
+     * @param commandPrefix the command prefix to remove.
+     * @return the zero-based task index.
+     * @throws DuckyException if the task number is invalid.
      */
     private int parseTaskNumber(String command, String commandPrefix) throws DuckyException {
         String numberText = command.substring(commandPrefix.length()).trim();
@@ -172,7 +172,7 @@ public class Parser {
         /**
          * Creates a command without a task or task index.
          *
-         * @param type the command type
+         * @param type the command type.
          */
         public ParsedCommand(CommandType type) {
             this(type, null, -1);
@@ -181,8 +181,8 @@ public class Parser {
         /**
          * Creates an add command.
          *
-         * @param type the command type
-         * @param task the task argument
+         * @param type the command type.
+         * @param task the task argument.
          */
         public ParsedCommand(CommandType type, Task task) {
             this(type, task, -1);
@@ -191,8 +191,8 @@ public class Parser {
         /**
          * Creates a mark, unmark, or delete command.
          *
-         * @param type the command type
-         * @param taskIndex the zero-based task index
+         * @param type the command type.
+         * @param taskIndex the zero-based task index.
          */
         public ParsedCommand(CommandType type, int taskIndex) {
             this(type, null, taskIndex);
@@ -207,7 +207,7 @@ public class Parser {
         /**
          * Returns the command type.
          *
-         * @return the command type
+         * @return the command type.
          */
         public CommandType getType() {
             return type;
@@ -216,7 +216,7 @@ public class Parser {
         /**
          * Returns the task argument.
          *
-         * @return the task argument
+         * @return the task argument.
          */
         public Task getTask() {
             return task;
@@ -225,7 +225,7 @@ public class Parser {
         /**
          * Returns the zero-based task index.
          *
-         * @return the task index
+         * @return the task index.
          */
         public int getTaskIndex() {
             return taskIndex;

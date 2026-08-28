@@ -24,7 +24,7 @@ public class Storage {
     /**
      * Creates storage that uses the given data file.
      *
-     * @param filePath the path of the data file
+     * @param filePath the path of the data file.
      */
     public Storage(String filePath) {
         this.filePath = Paths.get(filePath);
@@ -33,8 +33,8 @@ public class Storage {
     /**
      * Loads all saved tasks from the data file.
      *
-     * @return the saved tasks, or an empty list when the file does not exist
-     * @throws DuckyException if the file cannot be read or contains invalid data
+     * @return the saved tasks, or an empty list when the file does not exist.
+     * @throws DuckyException if the file cannot be read or contains invalid data.
      */
     public List<Task> load() throws DuckyException {
         if (Files.notExists(filePath)) {
@@ -57,8 +57,8 @@ public class Storage {
     /**
      * Saves all current tasks to the data file.
      *
-     * @param tasks the tasks to save
-     * @throws DuckyException if the directory or file cannot be written
+     * @param tasks the tasks to save.
+     * @throws DuckyException if the directory or file cannot be written.
      */
     public void save(TaskList taskList) throws DuckyException {
         try {
@@ -80,9 +80,9 @@ public class Storage {
     /**
      * Converts one saved line into a task object.
      *
-     * @param line the saved task line
-     * @return the task represented by the line
-     * @throws DuckyException if the line is invalid
+     * @param line the saved task line.
+     * @return the task represented by the line.
+     * @throws DuckyException if the line is invalid.
      */
     private Task parseTask(String line) throws DuckyException {
         String[] fields = line.split(FIELD_SEPARATOR, -1);
@@ -131,9 +131,9 @@ public class Storage {
     /**
      * Restores the completion status stored in a task line.
      *
-     * @param task the task to update
-     * @param status the saved completion status
-     * @throws DuckyException if the status is invalid
+     * @param task the task to update.
+     * @param status the saved completion status.
+     * @throws DuckyException if the status is invalid.
      */
     private void restoreCompletionStatus(Task task, String status) throws DuckyException {
         if ("1".equals(status)) {
@@ -146,9 +146,9 @@ public class Storage {
     /**
      * Converts a task object into one line for the data file.
      *
-     * @param task the task to format
-     * @return the serialized task
-     * @throws DuckyException if the task type is unsupported
+     * @param task the task to format.
+     * @return the serialized task.
+     * @throws DuckyException if the task type is unsupported.
      */
     private String formatTask(Task task) throws DuckyException {
         String status = task.isDone() ? "1" : "0";

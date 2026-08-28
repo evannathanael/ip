@@ -1,17 +1,17 @@
 package ducky;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link Task}.
  */
 class TaskTest {
-    @Test
     /** Tests that construction preserves a task's description and incomplete status. */
+    @Test
     void constructor_descriptionAndIncompleteStatusSet() {
         Task task = new Task("read book");
 
@@ -19,32 +19,32 @@ class TaskTest {
         assertFalse(task.isDone());
     }
 
-    @Test
     /** Tests retrieval of a task's description. */
+    @Test
     void getDescription_taskDescriptionReturned() {
         Task task = new Task("read book");
 
         assertEquals("read book", task.getDescription());
     }
 
-    @Test
     /** Tests that a newly created task is incomplete. */
+    @Test
     void isDone_newTask_falseReturned() {
         Task task = new Task("read book");
 
         assertFalse(task.isDone());
     }
 
-    @Test
     /** Tests the status icon for an incomplete task. */
+    @Test
     void getStatusIcon_newTask_spaceReturned() {
         Task task = new Task("read book");
 
         assertEquals(" ", task.getStatusIcon());
     }
 
-    @Test
     /** Tests the status icon for a completed task. */
+    @Test
     void getStatusIcon_completedTask_xReturned() {
         Task task = new Task("read book");
         task.markAsDone();
@@ -52,8 +52,8 @@ class TaskTest {
         assertEquals("X", task.getStatusIcon());
     }
 
-    @Test
     /** Tests marking an incomplete task as complete. */
+    @Test
     void markAsDone_incompleteTask_taskBecomesDone() {
         Task task = new Task("read book");
 
@@ -62,8 +62,8 @@ class TaskTest {
         assertTrue(task.isDone());
     }
 
-    @Test
     /** Tests that marking a completed task again leaves it completed. */
+    @Test
     void markAsDone_completedTask_remainsDone() {
         Task task = new Task("read book");
 
@@ -74,8 +74,8 @@ class TaskTest {
         assertEquals("X", task.getStatusIcon());
     }
 
-    @Test
     /** Tests unmarking a completed task. */
+    @Test
     void unmark_completedTask_taskBecomesIncomplete() {
         Task task = new Task("read book");
 
@@ -86,8 +86,8 @@ class TaskTest {
         assertEquals(" ", task.getStatusIcon());
     }
 
-    @Test
     /** Tests that unmarking an incomplete task leaves it incomplete. */
+    @Test
     void unmark_incompleteTask_remainsIncomplete() {
         Task task = new Task("read book");
 
@@ -97,16 +97,16 @@ class TaskTest {
         assertEquals(" ", task.getStatusIcon());
     }
 
-    @Test
     /** Tests the display string for an incomplete task. */
+    @Test
     void toString_incompleteTask_formattedDescriptionReturned() {
         Task task = new Task("read book");
 
         assertEquals("[ ] read book", task.toString());
     }
 
-    @Test
     /** Tests the display string for a completed task. */
+    @Test
     void toString_completedTask_formattedDescriptionReturned() {
         Task task = new Task("read book");
         task.markAsDone();
