@@ -15,15 +15,24 @@ import org.junit.jupiter.api.Test;
 class ParserTest {
     private final Parser parser = new Parser();
 
-    /** Tests parsing commands without arguments. */
     @Test
+    /** Tests parsing commands without arguments. */
     void parse_simpleCommand_correctCommandTypeReturned() throws DuckyException {
         assertEquals(Parser.CommandType.BYE, parser.parse("bye").getType());
         assertEquals(Parser.CommandType.LIST, parser.parse("list").getType());
     }
 
-    /** Tests conversion of a user-facing task number to a zero-based index. */
     @Test
+    /** Tests parsing a find command and extracting its keyword. */
+    void parse_findCommand_keywordReturned() throws DuckyException {
+        Parser.ParsedCommand parsed = parser.parse("find Book");
+
+        assertEquals(Parser.CommandType.FIND, parsed.getType());
+        assertEquals("Book", parsed.getKeyword());
+    }
+
+    @Test
+    /** Tests conversion of a user-facing task number to a zero-based index. */
     void parse_markCommand_oneBasedNumberConvertedToZeroBasedIndex() throws DuckyException {
         Parser.ParsedCommand parsed = parser.parse("mark 3");
 
@@ -31,8 +40,8 @@ class ParserTest {
         assertEquals(2, parsed.getTaskIndex());
     }
 
-    /** Tests parsing a to-do command with surrounding whitespace in its description. */
     @Test
+    /** Tests parsing a to-do command with surrounding whitespace in its description. */
     void parse_todoCommand_trimmedDescriptionAndTodoReturned() throws DuckyException {
         Parser.ParsedCommand parsed = parser.parse("todo   buy milk  ");
 
@@ -41,8 +50,8 @@ class ParserTest {
         assertEquals("buy milk", task.getDescription());
     }
 
-    /** Tests parsing a deadline's description and due date. */
     @Test
+    /** Tests parsing a deadline's description and due date. */
     void parse_deadlineCommand_dateAndDescriptionParsed() throws DuckyException {
         Parser.ParsedCommand parsed = parser.parse("deadline submit report /by 2026-09-01");
 
@@ -51,8 +60,8 @@ class ParserTest {
         assertEquals(LocalDate.of(2026, 9, 1), task.getBy());
     }
 
-    /** Tests parsing an event's description, start time, and end time. */
     @Test
+    /** Tests parsing an event's description, start time, and end time. */
     void parse_eventCommand_startAndEndParsed() throws DuckyException {
         Parser.ParsedCommand parsed = parser.parse(
                 "event team meeting /from 2026-09-01 0900 /to 2026-09-01 1030");
@@ -63,21 +72,28 @@ class ParserTest {
         assertEquals(LocalDateTime.of(2026, 9, 1, 10, 30), task.getEnd());
     }
 
-    /** Tests rejection of an unrecognised command. */
     @Test
+    /** Tests rejection of an unrecognised command. */
     void parse_invalidCommand_exceptionThrown() {
         assertThrows(DuckyException.class, () -> parser.parse("unknown command"));
     }
 
-    /** Tests rejection of invalid task-number arguments. */
     @Test
+    /** Tests rejection of missing required argument in the find command. */
+    void parse_emptyFindKeyword_exceptionThrown() {
+        assertThrows(DuckyException.class, () -> parser.parse("find"));
+        assertThrows(DuckyException.class, () -> parser.parse("find   "));
+    }
+
+    @Test
+    /** Tests rejection of invalid task-number arguments. */
     void parse_invalidTaskNumbers_exceptionThrown() {
         assertThrows(DuckyException.class, () -> parser.parse("mark 0"));
         assertThrows(DuckyException.class, () -> parser.parse("delete abc"));
     }
 
-    /** Tests rejection of structured commands missing required arguments. */
     @Test
+    /** Tests rejection of structured commands missing required arguments. */
     void parse_incompleteStructuredCommand_exceptionThrown() {
         assertThrows(DuckyException.class, () -> parser.parse("todo"));
         assertThrows(DuckyException.class, () -> parser.parse("deadline submit report"));

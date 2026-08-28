@@ -1,5 +1,6 @@
 package ducky;
 
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -75,6 +76,20 @@ public class Ui {
         System.out.println("Here are the tasks in your list:");
         for (int i = 0; i < tasks.size(); i++) {
             System.out.println(String.format("%d.%s", i + 1, tasks.get(i)));
+        }
+        System.out.println(LINE);
+    }
+
+    /**
+     * Displays tasks matching a search keyword.
+     *
+     * @param matchingTasks the tasks matching the search keyword.
+     */
+    public void showMatchingTasks(List<Task> matchingTasks) {
+        System.out.println(LINE);
+        System.out.println("Here are the matching tasks in your list:");
+        for (int i = 0; i < matchingTasks.size(); i++) {
+            System.out.println(String.format("%d.%s", i + 1, matchingTasks.get(i)));
         }
         System.out.println(LINE);
     }

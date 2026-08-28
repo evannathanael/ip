@@ -26,6 +26,9 @@ public class Parser {
         if ("list".equals(command)) {
             return new ParsedCommand(CommandType.LIST);
         }
+        if ("find".equals(command) || command.startsWith("find ")) {
+            return new ParsedCommand(CommandType.FIND, parseFindKeyword(command));
+        }
         if (command.startsWith("mark ")) {
             return new ParsedCommand(CommandType.MARK, parseTaskNumber(command, "mark "));
         }
@@ -60,6 +63,21 @@ public class Parser {
             throw new DuckyException("To do task is empty! 🐥");
         }
         return new ToDo(description);
+    }
+
+    /**
+     * Parses the keyword from a find command.
+     *
+     * @param command the complete find command
+     * @return the search keyword
+     * @throws DuckyException if the keyword is empty
+     */
+    private String parseFindKeyword(String command) throws DuckyException {
+        String keyword = command.substring("find".length()).trim();
+        if (keyword.isEmpty()) {
+            throw new DuckyException("Please provide a keyword to find 🐥");
+        }
+        return keyword;
     }
 
     /**
@@ -158,7 +176,7 @@ public class Parser {
      * Represents the type of a parsed command.
      */
     public enum CommandType {
-        ADD, MARK, UNMARK, DELETE, LIST, BYE
+        ADD, MARK, UNMARK, DELETE, LIST, FIND, BYE
     }
 
     /**
@@ -167,6 +185,7 @@ public class Parser {
     public static class ParsedCommand {
         private final CommandType type;
         private final Task task;
+        private final String keyword;
         private final int taskIndex;
 
         /**
@@ -175,7 +194,7 @@ public class Parser {
          * @param type the command type.
          */
         public ParsedCommand(CommandType type) {
-            this(type, null, -1);
+            this(type, null, null, -1);
         }
 
         /**
@@ -185,7 +204,17 @@ public class Parser {
          * @param task the task argument.
          */
         public ParsedCommand(CommandType type, Task task) {
-            this(type, task, -1);
+            this(type, task, null, -1);
+        }
+
+        /**
+         * Creates a find command.
+         *
+         * @param type the command type.
+         * @param keyword the search keyword.
+         */
+        public ParsedCommand(CommandType type, String keyword) {
+            this(type, null, keyword, -1);
         }
 
         /**
@@ -195,12 +224,13 @@ public class Parser {
          * @param taskIndex the zero-based task index.
          */
         public ParsedCommand(CommandType type, int taskIndex) {
-            this(type, null, taskIndex);
+            this(type, null, null, taskIndex);
         }
 
-        private ParsedCommand(CommandType type, Task task, int taskIndex) {
+        private ParsedCommand(CommandType type, Task task, String keyword, int taskIndex) {
             this.type = type;
             this.task = task;
+            this.keyword = keyword;
             this.taskIndex = taskIndex;
         }
 
@@ -220,6 +250,15 @@ public class Parser {
          */
         public Task getTask() {
             return task;
+        }
+
+        /**
+         * Returns the search keyword.
+         *
+         * @return the search keyword.
+         */
+        public String getKeyword() {
+            return keyword;
         }
 
         /**

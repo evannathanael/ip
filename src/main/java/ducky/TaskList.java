@@ -2,6 +2,7 @@ package ducky;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Represents the collection of tasks managed by Ducky.
@@ -70,5 +71,22 @@ public class TaskList {
      */
     public List<Task> getTasks() {
         return new ArrayList<>(tasks);
+    }
+
+    /**
+     * Returns tasks whose descriptions contain the given keyword, ignoring letter case.
+     *
+     * @param keyword the keyword to search for.
+     * @return the matching tasks in their original list order.
+     */
+    public List<Task> find(String keyword) {
+        String normalizedKeyword = keyword.toLowerCase(Locale.ENGLISH);
+        List<Task> matchingTasks = new ArrayList<>();
+        for (Task task : tasks) {
+            if (task.getDescription().toLowerCase(Locale.ENGLISH).contains(normalizedKeyword)) {
+                matchingTasks.add(task);
+            }
+        }
+        return matchingTasks;
     }
 }
