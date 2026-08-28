@@ -11,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class TaskTest {
     @Test
+    /** Tests that construction preserves a task's description and incomplete status. */
     void constructor_descriptionAndIncompleteStatusSet() {
         Task task = new Task("read book");
 
@@ -19,6 +20,7 @@ class TaskTest {
     }
 
     @Test
+    /** Tests retrieval of a task's description. */
     void getDescription_taskDescriptionReturned() {
         Task task = new Task("read book");
 
@@ -26,6 +28,7 @@ class TaskTest {
     }
 
     @Test
+    /** Tests that a newly created task is incomplete. */
     void isDone_newTask_falseReturned() {
         Task task = new Task("read book");
 
@@ -33,6 +36,7 @@ class TaskTest {
     }
 
     @Test
+    /** Tests the status icon for an incomplete task. */
     void getStatusIcon_newTask_spaceReturned() {
         Task task = new Task("read book");
 
@@ -40,6 +44,7 @@ class TaskTest {
     }
 
     @Test
+    /** Tests the status icon for a completed task. */
     void getStatusIcon_completedTask_xReturned() {
         Task task = new Task("read book");
         task.markAsDone();
@@ -48,6 +53,7 @@ class TaskTest {
     }
 
     @Test
+    /** Tests marking an incomplete task as complete. */
     void markAsDone_incompleteTask_taskBecomesDone() {
         Task task = new Task("read book");
 
@@ -57,6 +63,7 @@ class TaskTest {
     }
 
     @Test
+    /** Tests that marking a completed task again leaves it completed. */
     void markAsDone_completedTask_remainsDone() {
         Task task = new Task("read book");
 
@@ -68,6 +75,7 @@ class TaskTest {
     }
 
     @Test
+    /** Tests unmarking a completed task. */
     void unmark_completedTask_taskBecomesIncomplete() {
         Task task = new Task("read book");
 
@@ -79,6 +87,7 @@ class TaskTest {
     }
 
     @Test
+    /** Tests that unmarking an incomplete task leaves it incomplete. */
     void unmark_incompleteTask_remainsIncomplete() {
         Task task = new Task("read book");
 
@@ -89,6 +98,7 @@ class TaskTest {
     }
 
     @Test
+    /** Tests the display string for an incomplete task. */
     void toString_incompleteTask_formattedDescriptionReturned() {
         Task task = new Task("read book");
 
@@ -96,6 +106,7 @@ class TaskTest {
     }
 
     @Test
+    /** Tests the display string for a completed task. */
     void toString_completedTask_formattedDescriptionReturned() {
         Task task = new Task("read book");
         task.markAsDone();

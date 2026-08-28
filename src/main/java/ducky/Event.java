@@ -44,6 +44,11 @@ public class Event extends Task {
         return end;
     }
 
+    /**
+     * Returns this event in Ducky's display format.
+     *
+     * @return the formatted event
+     */
     @Override
     public String toString() {
         return "[E]" + super.toString() + String.format(" (from: %s to: %s)",
