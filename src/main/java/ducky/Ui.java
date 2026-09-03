@@ -4,7 +4,8 @@ import java.util.List;
 import java.util.Scanner;
 
 /**
- * Handles all interactions between Ducky and the user.
+ * Formats all messages shown to the user and reads commands from standard input.
+ * Callers (the text UI or the GUI) decide how to display the formatted messages.
  */
 public class Ui {
     private static final String LINE = "____________________________________________________________";
@@ -24,14 +25,15 @@ public class Ui {
     }
 
     /**
-     * Displays the chatbot's welcome message.
+     * Formats the chatbot's welcome message.
+     *
+     * @return the welcome message.
      */
-    public void showWelcome() {
-        System.out.println(LINE);
-        System.out.println(BANNER);
-        System.out.println("Hello! I'm Ducky 🐥");
-        System.out.println("What can I do for you?");
-        System.out.println(LINE);
+    public String showWelcome() {
+        return LINE + "\n" + BANNER + "\n"
+                + "Hello! I'm Ducky 🐥\n"
+                + "What can I do for you?\n"
+                + LINE;
     }
 
     /**
@@ -44,102 +46,107 @@ public class Ui {
     }
 
     /**
-     * Displays the chatbot's exit message.
+     * Formats the chatbot's exit message.
+     *
+     * @return the exit message.
      */
-    public void showExitMessage() {
-        System.out.println(LINE);
-        System.out.println("Bye. Hope to see you again soon!");
-        System.out.println(LINE);
+    public String showExitMessage() {
+        return LINE + "\n" + "Bye. Hope to see you again soon!" + "\n" + LINE;
     }
 
     /**
-     * Displays the task-added confirmation.
+     * Formats the task-added confirmation.
      *
      * @param task the added task.
      * @param taskCount the number of tasks after adding.
+     * @return the task-added confirmation.
      */
-    public void showTaskAdded(Task task, int taskCount) {
-        System.out.println(LINE);
-        System.out.println("Got it. I've added this task:");
-        System.out.println("  " + task);
-        System.out.println(String.format("Now you have %d tasks in the list.", taskCount));
-        System.out.println(LINE);
+    public String showTaskAdded(Task task, int taskCount) {
+        return LINE + "\n"
+                + "Got it. I've added this task:\n"
+                + "  " + task + "\n"
+                + String.format("Now you have %d tasks in the list.", taskCount) + "\n"
+                + LINE;
     }
 
     /**
-     * Displays all tasks.
+     * Formats all tasks.
      *
      * @param tasks the tasks to display.
+     * @return the formatted task list.
      */
-    public void showTasks(TaskList tasks) {
-        System.out.println(LINE);
-        System.out.println("Here are the tasks in your list:");
+    public String showTasks(TaskList tasks) {
+        StringBuilder message = new StringBuilder(LINE + "\n" + "Here are the tasks in your list:\n");
         for (int i = 0; i < tasks.size(); i++) {
-            System.out.println(String.format("%d.%s", i + 1, tasks.get(i)));
+            message.append(String.format("%d.%s", i + 1, tasks.get(i))).append("\n");
         }
-        System.out.println(LINE);
+        message.append(LINE);
+        return message.toString();
     }
 
     /**
-     * Displays tasks matching a search keyword.
+     * Formats tasks matching a search keyword.
      *
      * @param matchingTasks the tasks matching the search keyword.
+     * @return the formatted matching task list.
      */
-    public void showMatchingTasks(List<Task> matchingTasks) {
-        System.out.println(LINE);
-        System.out.println("Here are the matching tasks in your list:");
+    public String showMatchingTasks(List<Task> matchingTasks) {
+        StringBuilder message = new StringBuilder(LINE + "\n" + "Here are the matching tasks in your list:\n");
         for (int i = 0; i < matchingTasks.size(); i++) {
-            System.out.println(String.format("%d.%s", i + 1, matchingTasks.get(i)));
+            message.append(String.format("%d.%s", i + 1, matchingTasks.get(i))).append("\n");
         }
-        System.out.println(LINE);
+        message.append(LINE);
+        return message.toString();
     }
 
     /**
-     * Displays a task-marked-as-done confirmation.
+     * Formats a task-marked-as-done confirmation.
      *
      * @param task the updated task.
+     * @return the task-marked-as-done confirmation.
      */
-    public void showTaskMarkedAsDone(Task task) {
-        System.out.println(LINE);
-        System.out.println("Nice! I've marked this task as done:");
-        System.out.println("  " + task);
-        System.out.println(LINE);
+    public String showTaskMarkedAsDone(Task task) {
+        return LINE + "\n"
+                + "Nice! I've marked this task as done:\n"
+                + "  " + task + "\n"
+                + LINE;
     }
 
     /**
-     * Displays a task-unmarked confirmation.
+     * Formats a task-unmarked confirmation.
      *
      * @param task the updated task.
+     * @return the task-unmarked confirmation.
      */
-    public void showTaskUnmarked(Task task) {
-        System.out.println(LINE);
-        System.out.println("OK, I've marked this task as not done yet:");
-        System.out.println("  " + task);
-        System.out.println(LINE);
+    public String showTaskUnmarked(Task task) {
+        return LINE + "\n"
+                + "OK, I've marked this task as not done yet:\n"
+                + "  " + task + "\n"
+                + LINE;
     }
 
     /**
-     * Displays a task-deleted confirmation.
+     * Formats a task-deleted confirmation.
      *
      * @param task the deleted task.
      * @param taskCount the number of tasks after deletion.
+     * @return the task-deleted confirmation.
      */
-    public void showTaskDeleted(Task task, int taskCount) {
-        System.out.println(LINE);
-        System.out.println("Noted. I've removed this task:");
-        System.out.println("  " + task);
-        System.out.println(String.format("Now you have %d tasks in the list.", taskCount));
-        System.out.println(LINE);
+    public String showTaskDeleted(Task task, int taskCount) {
+        return LINE + "\n"
+                + "Noted. I've removed this task:\n"
+                + "  " + task + "\n"
+                + String.format("Now you have %d tasks in the list.", taskCount) + "\n"
+                + LINE;
     }
 
     /**
-     * Displays an error message.
+     * Formats an error message.
      *
      * @param message the user-facing error message.
+     * @return the formatted error message.
      */
-    public void showError(String message) {
-        System.out.println(LINE);
-        System.out.println("QUACK! " + message);
-        System.out.println(LINE);
+    public String showError(String message) {
+        return LINE + "\n" + "QUACK! " + message + "\n" + LINE;
     }
 }

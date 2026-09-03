@@ -10,6 +10,14 @@ public class Ducky {
     private final TaskList tasks;
     private final Ui ui;
     private final Parser parser;
+    private boolean isExit;
+
+    /**
+     * Creates a chatbot using the default data file.
+     */
+    public Ducky() {
+        this(DATA_FILE_PATH);
+    }
 
     /**
      * Creates a chatbot using the given data file.
@@ -32,69 +40,99 @@ public class Ducky {
         try {
             return new TaskList(storage.load());
         } catch (DuckyException e) {
-            ui.showError(e.getMessage());
+            System.out.println(ui.showError(e.getMessage()));
             return new TaskList();
         }
     }
 
     /**
-     * Runs the chatbot until the user enters {@code bye}.
+     * Runs the chatbot on the console until the user enters {@code bye}.
      */
     public void run() {
-        ui.showWelcome();
-        while (true) {
+        System.out.println(ui.showWelcome());
+        while (!isExit) {
             String command = ui.readCommand();
             try {
-                if (!processCommand(command)) {
-                    return;
-                }
+                System.out.println(processCommand(command));
             } catch (DuckyException e) {
-                ui.showError(e.getMessage());
+                System.out.println(ui.showError(e.getMessage()));
             }
         }
+    }
+
+    /**
+     * Returns the chatbot's welcome message, for display when a GUI session starts.
+     *
+     * @return the welcome message.
+     */
+    public String getWelcomeMessage() {
+        return ui.showWelcome();
+    }
+
+    /**
+     * Parses and executes one user command, returning the chatbot's reply.
+     * Used by the GUI, which displays one reply per user input rather than printing to the console.
+     *
+     * @param input the user's command.
+     * @return the chatbot's reply.
+     */
+    public String getResponse(String input) {
+        try {
+            return processCommand(input);
+        } catch (DuckyException e) {
+            return ui.showError(e.getMessage());
+        }
+    }
+
+    /**
+     * Returns whether the most recently processed command was {@code bye}.
+     * Used by the GUI to decide when to close the application window.
+     *
+     * @return {@code true} if the chatbot should exit, otherwise {@code false}.
+     */
+    public boolean isExit() {
+        return isExit;
     }
 
     /**
      * Parses and executes one user command.
      *
      * @param command the user's command.
-     * @return {@code false} when the chatbot should exit, otherwise {@code true}.
+     * @return the chatbot's reply to the command.
      * @throws DuckyException if the command is invalid or cannot be saved.
      */
-    private boolean processCommand(String command) throws DuckyException {
+    private String processCommand(String command) throws DuckyException {
         Parser.ParsedCommand parsedCommand = parser.parse(command);
         switch (parsedCommand.getType()) {
             case BYE:
-                ui.showExitMessage();
-                return false;
+                isExit = true;
+                return ui.showExitMessage();
             case LIST:
-                ui.showTasks(tasks);
-                return true;
+                return ui.showTasks(tasks);
             case FIND:
-                ui.showMatchingTasks(tasks.find(parsedCommand.getKeyword()));
-                return true;
+                return ui.showMatchingTasks(tasks.find(parsedCommand.getKeyword()));
             case ADD:
                 tasks.add(parsedCommand.getTask());
-                ui.showTaskAdded(parsedCommand.getTask(), tasks.size());
+                String taskAddedMessage = ui.showTaskAdded(parsedCommand.getTask(), tasks.size());
                 storage.save(tasks);
-                return true;
+                return taskAddedMessage;
             case MARK:
                 Task taskToMark = getTask(parsedCommand.getTaskIndex());
                 taskToMark.markAsDone();
-                ui.showTaskMarkedAsDone(taskToMark);
+                String taskMarkedMessage = ui.showTaskMarkedAsDone(taskToMark);
                 storage.save(tasks);
-                return true;
+                return taskMarkedMessage;
             case UNMARK:
                 Task taskToUnmark = getTask(parsedCommand.getTaskIndex());
                 taskToUnmark.unmark();
-                ui.showTaskUnmarked(taskToUnmark);
+                String taskUnmarkedMessage = ui.showTaskUnmarked(taskToUnmark);
                 storage.save(tasks);
-                return true;
+                return taskUnmarkedMessage;
             case DELETE:
                 Task deletedTask = tasks.delete(parsedCommand.getTaskIndex());
-                ui.showTaskDeleted(deletedTask, tasks.size());
+                String taskDeletedMessage = ui.showTaskDeleted(deletedTask, tasks.size());
                 storage.save(tasks);
-                return true;
+                return taskDeletedMessage;
             default:
                 throw new DuckyException("I didn't get what you said 🐥");
         }
@@ -115,7 +153,7 @@ public class Ducky {
     }
 
     /**
-     * Starts Ducky with the default data file.
+     * Starts Ducky with the default data file, using the console-based UI.
      *
      * @param args command-line arguments, which are currently unused.
      */
