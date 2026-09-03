@@ -64,39 +64,39 @@ public class Ducky {
     private boolean processCommand(String command) throws DuckyException {
         Parser.ParsedCommand parsedCommand = parser.parse(command);
         switch (parsedCommand.getType()) {
-        case BYE:
-            ui.showExitMessage();
-            return false;
-        case LIST:
-            ui.showTasks(tasks);
-            return true;
-        case FIND:
-            ui.showMatchingTasks(tasks.find(parsedCommand.getKeyword()));
-            return true;
-        case ADD:
-            tasks.add(parsedCommand.getTask());
-            ui.showTaskAdded(parsedCommand.getTask(), tasks.size());
-            storage.save(tasks);
-            return true;
-        case MARK:
-            Task taskToMark = getTask(parsedCommand.getTaskIndex());
-            taskToMark.markAsDone();
-            ui.showTaskMarkedAsDone(taskToMark);
-            storage.save(tasks);
-            return true;
-        case UNMARK:
-            Task taskToUnmark = getTask(parsedCommand.getTaskIndex());
-            taskToUnmark.unmark();
-            ui.showTaskUnmarked(taskToUnmark);
-            storage.save(tasks);
-            return true;
-        case DELETE:
-            Task deletedTask = tasks.delete(parsedCommand.getTaskIndex());
-            ui.showTaskDeleted(deletedTask, tasks.size());
-            storage.save(tasks);
-            return true;
-        default:
-            throw new DuckyException("I didn't get what you said 🐥");
+            case BYE:
+                ui.showExitMessage();
+                return false;
+            case LIST:
+                ui.showTasks(tasks);
+                return true;
+            case FIND:
+                ui.showMatchingTasks(tasks.find(parsedCommand.getKeyword()));
+                return true;
+            case ADD:
+                tasks.add(parsedCommand.getTask());
+                ui.showTaskAdded(parsedCommand.getTask(), tasks.size());
+                storage.save(tasks);
+                return true;
+            case MARK:
+                Task taskToMark = getTask(parsedCommand.getTaskIndex());
+                taskToMark.markAsDone();
+                ui.showTaskMarkedAsDone(taskToMark);
+                storage.save(tasks);
+                return true;
+            case UNMARK:
+                Task taskToUnmark = getTask(parsedCommand.getTaskIndex());
+                taskToUnmark.unmark();
+                ui.showTaskUnmarked(taskToUnmark);
+                storage.save(tasks);
+                return true;
+            case DELETE:
+                Task deletedTask = tasks.delete(parsedCommand.getTaskIndex());
+                ui.showTaskDeleted(deletedTask, tasks.size());
+                storage.save(tasks);
+                return true;
+            default:
+                throw new DuckyException("I didn't get what you said 🐥");
         }
     }
 

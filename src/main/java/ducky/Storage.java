@@ -57,7 +57,7 @@ public class Storage {
     /**
      * Saves all current tasks to the data file.
      *
-     * @param tasks the tasks to save.
+     * @param taskList the tasks to save.
      * @throws DuckyException if the directory or file cannot be written.
      */
     public void save(TaskList taskList) throws DuckyException {
@@ -92,36 +92,36 @@ public class Storage {
 
         Task task;
         switch (fields[0]) {
-        case TODO_TYPE:
-            if (fields.length != 3) {
-                throw new DuckyException("Sorry, your save file contains invalid todo data 🐥");
-            }
-            task = new ToDo(fields[2]);
-            break;
-        case DEADLINE_TYPE:
-            if (fields.length != 4) {
-                throw new DuckyException("Sorry, your save file contains invalid deadline data 🐥");
-            }
-            try {
-                task = new Deadline(fields[2], LocalDate.parse(fields[3]));
-            } catch (DateTimeParseException e) {
-                throw new DuckyException("Sorry, your save file contains an invalid deadline date 🐥");
-            }
-            break;
-        case EVENT_TYPE:
-            if (fields.length != 5) {
-                throw new DuckyException("Sorry, your save file contains invalid event data 🐥");
-            }
-            try {
-                LocalDateTime start = LocalDateTime.parse(fields[3]);
-                LocalDateTime end = LocalDateTime.parse(fields[4]);
-                task = new Event(fields[2], start, end);
-            } catch (DateTimeParseException e) {
-                throw new DuckyException("Sorry, your save file contains invalid event times 🐥");
-            }
-            break;
-        default:
-            throw new DuckyException("Sorry, your save file contains an unknown task type 🐥");
+            case TODO_TYPE:
+                if (fields.length != 3) {
+                    throw new DuckyException("Sorry, your save file contains invalid todo data 🐥");
+                }
+                task = new ToDo(fields[2]);
+                break;
+            case DEADLINE_TYPE:
+                if (fields.length != 4) {
+                    throw new DuckyException("Sorry, your save file contains invalid deadline data 🐥");
+                }
+                try {
+                    task = new Deadline(fields[2], LocalDate.parse(fields[3]));
+                } catch (DateTimeParseException e) {
+                    throw new DuckyException("Sorry, your save file contains an invalid deadline date 🐥");
+                }
+                break;
+            case EVENT_TYPE:
+                if (fields.length != 5) {
+                    throw new DuckyException("Sorry, your save file contains invalid event data 🐥");
+                }
+                try {
+                    LocalDateTime start = LocalDateTime.parse(fields[3]);
+                    LocalDateTime end = LocalDateTime.parse(fields[4]);
+                    task = new Event(fields[2], start, end);
+                } catch (DateTimeParseException e) {
+                    throw new DuckyException("Sorry, your save file contains invalid event times 🐥");
+                }
+                break;
+            default:
+                throw new DuckyException("Sorry, your save file contains an unknown task type 🐥");
         }
 
         restoreCompletionStatus(task, fields[1]);
