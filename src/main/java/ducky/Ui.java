@@ -2,6 +2,8 @@ package ducky;
 
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * Formats all messages shown to the user and reads commands from standard input.
@@ -76,12 +78,10 @@ public class Ui {
      * @return the formatted task list.
      */
     public String showTasks(TaskList tasks) {
-        StringBuilder message = new StringBuilder(LINE + "\n" + "Here are the tasks in your list:\n");
-        for (int i = 0; i < tasks.size(); i++) {
-            message.append(String.format("%d.%s", i + 1, tasks.get(i))).append("\n");
-        }
-        message.append(LINE);
-        return message.toString();
+        String taskLines = IntStream.range(0, tasks.size())
+                .mapToObj(index -> String.format("%d.%s\n", index + 1, tasks.get(index)))
+                .collect(Collectors.joining());
+        return LINE + "\n" + "Here are the tasks in your list:\n" + taskLines + LINE;
     }
 
     /**
@@ -91,12 +91,10 @@ public class Ui {
      * @return the formatted matching task list.
      */
     public String showMatchingTasks(List<Task> matchingTasks) {
-        StringBuilder message = new StringBuilder(LINE + "\n" + "Here are the matching tasks in your list:\n");
-        for (int i = 0; i < matchingTasks.size(); i++) {
-            message.append(String.format("%d.%s", i + 1, matchingTasks.get(i))).append("\n");
-        }
-        message.append(LINE);
-        return message.toString();
+        String taskLines = IntStream.range(0, matchingTasks.size())
+                .mapToObj(index -> String.format("%d.%s\n", index + 1, matchingTasks.get(index)))
+                .collect(Collectors.joining());
+        return LINE + "\n" + "Here are the matching tasks in your list:\n" + taskLines + LINE;
     }
 
     /**
