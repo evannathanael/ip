@@ -120,6 +120,7 @@ public class Ducky {
             case DELETE:
                 return deleteTask(parsedCommand.getTaskIndex());
             default:
+                assert false : "Every parsed command type must be handled";
                 throw new DuckyException("I didn't get what you said 🐥");
         }
     }

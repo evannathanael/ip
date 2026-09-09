@@ -193,7 +193,13 @@ public class Parser {
      * Represents the type of a parsed command.
      */
     public enum CommandType {
-        ADD, MARK, UNMARK, DELETE, LIST, FIND, BYE
+        ADD,
+        MARK,
+        UNMARK,
+        DELETE,
+        LIST,
+        FIND,
+        BYE
     }
 
     /**
@@ -208,6 +214,15 @@ public class Parser {
         private final int taskIndex;
 
         private ParsedCommand(CommandType type, Task task, String keyword, int taskIndex) {
+            assert type != null : "A parsed command must have a type";
+            assert (type == CommandType.ADD) == (task != null)
+                    : "Only add commands may contain a task";
+            assert (type == CommandType.FIND) == (keyword != null)
+                    : "Only find commands may contain a keyword";
+            assert (type == CommandType.MARK
+                    || type == CommandType.UNMARK
+                    || type == CommandType.DELETE) == (taskIndex >= 0)
+                    : "Only task-modifying commands may contain a task index";
             this.type = type;
             this.task = task;
             this.keyword = keyword;

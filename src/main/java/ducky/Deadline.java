@@ -15,15 +15,16 @@ public class Deadline extends Task {
      * Creates a deadline task with the given description and due date.
      *
      * @param description the description of the task.
-     * @param by the due date or time.
+     * @param by the due date.
      */
     public Deadline(String description, LocalDate by) {
         super(description);
+        assert by != null : "A deadline must have a due date";
         this.by = by;
     }
 
     /**
-     * Returns the due date or time for this task.
+     * Returns the due date for this task.
      *
      * @return the deadline.
      */
