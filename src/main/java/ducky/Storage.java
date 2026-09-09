@@ -8,7 +8,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Handles saving tasks to and loading tasks from the hard disk.
@@ -21,6 +23,8 @@ public class Storage {
     private static final String INCOMPLETE_STATUS = "0";
     private static final String FIELD_SEPARATOR = " | ";
     private static final String FIELD_SEPARATOR_REGEX = " \\| ";
+    private static final String TAG_SEPARATOR = ",";
+    private static final String NO_TAGS = "-";
 
     private static final int TYPE_FIELD_INDEX = 0;
     private static final int STATUS_FIELD_INDEX = 1;
@@ -28,11 +32,17 @@ public class Storage {
     private static final int DEADLINE_DATE_FIELD_INDEX = 3;
     private static final int EVENT_START_FIELD_INDEX = 3;
     private static final int EVENT_END_FIELD_INDEX = 4;
+    private static final int TODO_TAGS_FIELD_INDEX = 3;
+    private static final int DEADLINE_TAGS_FIELD_INDEX = 4;
+    private static final int EVENT_TAGS_FIELD_INDEX = 5;
 
     private static final int MINIMUM_FIELD_COUNT = 3;
-    private static final int TODO_FIELD_COUNT = 3;
-    private static final int DEADLINE_FIELD_COUNT = 4;
-    private static final int EVENT_FIELD_COUNT = 5;
+    private static final int LEGACY_TODO_FIELD_COUNT = 3;
+    private static final int LEGACY_DEADLINE_FIELD_COUNT = 4;
+    private static final int LEGACY_EVENT_FIELD_COUNT = 5;
+    private static final int TODO_FIELD_COUNT = 4;
+    private static final int DEADLINE_FIELD_COUNT = 5;
+    private static final int EVENT_FIELD_COUNT = 6;
 
     private final Path filePath;
 
@@ -132,10 +142,11 @@ public class Storage {
      * @throws DuckyException if the record has an invalid number of fields.
      */
     private Task parseTodoTask(String[] fields) throws DuckyException {
-        if (fields.length != TODO_FIELD_COUNT) {
+        if (fields.length != LEGACY_TODO_FIELD_COUNT && fields.length != TODO_FIELD_COUNT) {
             throw new DuckyException("Sorry, your save file contains invalid todo data 🐥");
         }
-        return new ToDo(fields[DESCRIPTION_FIELD_INDEX]);
+        List<String> tags = parseTags(fields, TODO_TAGS_FIELD_INDEX);
+        return new ToDo(fields[DESCRIPTION_FIELD_INDEX], tags);
     }
 
     /**
@@ -146,13 +157,14 @@ public class Storage {
      * @throws DuckyException if the record structure or deadline date is invalid.
      */
     private Task parseDeadlineTask(String[] fields) throws DuckyException {
-        if (fields.length != DEADLINE_FIELD_COUNT) {
+        if (fields.length != LEGACY_DEADLINE_FIELD_COUNT && fields.length != DEADLINE_FIELD_COUNT) {
             throw new DuckyException("Sorry, your save file contains invalid deadline data 🐥");
         }
         try {
             String description = fields[DESCRIPTION_FIELD_INDEX];
             LocalDate deadline = LocalDate.parse(fields[DEADLINE_DATE_FIELD_INDEX]);
-            return new Deadline(description, deadline);
+            List<String> tags = parseTags(fields, DEADLINE_TAGS_FIELD_INDEX);
+            return new Deadline(description, deadline, tags);
         } catch (DateTimeParseException e) {
             throw new DuckyException("Sorry, your save file contains an invalid deadline date 🐥");
         }
@@ -166,17 +178,34 @@ public class Storage {
      * @throws DuckyException if the record structure or event times are invalid.
      */
     private Task parseEventTask(String[] fields) throws DuckyException {
-        if (fields.length != EVENT_FIELD_COUNT) {
+        if (fields.length != LEGACY_EVENT_FIELD_COUNT && fields.length != EVENT_FIELD_COUNT) {
             throw new DuckyException("Sorry, your save file contains invalid event data 🐥");
         }
         try {
             String description = fields[DESCRIPTION_FIELD_INDEX];
             LocalDateTime start = LocalDateTime.parse(fields[EVENT_START_FIELD_INDEX]);
             LocalDateTime end = LocalDateTime.parse(fields[EVENT_END_FIELD_INDEX]);
-            return new Event(description, start, end);
+            List<String> tags = parseTags(fields, EVENT_TAGS_FIELD_INDEX);
+            return new Event(description, start, end, tags);
         } catch (DateTimeParseException e) {
             throw new DuckyException("Sorry, your save file contains invalid event times 🐥");
         }
+    }
+
+    /**
+     * Parses the optional tag field of a saved task.
+     *
+     * @param fields the fields in a saved task record.
+     * @param tagsFieldIndex the expected index of the tag field.
+     * @return the stored tags, or an empty list for a legacy or untagged record.
+     */
+    private List<String> parseTags(String[] fields, int tagsFieldIndex) {
+        if (fields.length <= tagsFieldIndex || NO_TAGS.equals(fields[tagsFieldIndex])) {
+            return List.of();
+        }
+        return Arrays.stream(fields[tagsFieldIndex].split(TAG_SEPARATOR))
+                .filter(tag -> !tag.isBlank())
+                .collect(Collectors.toList());
     }
 
     /**
@@ -203,15 +232,29 @@ public class Storage {
      */
     private String formatTask(Task task) throws DuckyException {
         String status = task.isDone() ? COMPLETE_STATUS : INCOMPLETE_STATUS;
+        String tags = formatTags(task);
         if (task instanceof ToDo) {
-            return String.join(FIELD_SEPARATOR, TODO_TYPE, status, task.getDescription());
+            return String.join(FIELD_SEPARATOR, TODO_TYPE, status, task.getDescription(), tags);
         } else if (task instanceof Deadline deadline) {
             return String.join(FIELD_SEPARATOR, DEADLINE_TYPE, status,
-                    task.getDescription(), deadline.getBy().toString());
+                    task.getDescription(), deadline.getBy().toString(), tags);
         } else if (task instanceof Event event) {
             return String.join(FIELD_SEPARATOR, EVENT_TYPE, status,
-                    task.getDescription(), event.getStart().toString(), event.getEnd().toString());
+                    task.getDescription(), event.getStart().toString(), event.getEnd().toString(), tags);
         }
         throw new DuckyException("Sorry, I could not save an unsupported task type 🐥");
+    }
+
+    /**
+     * Converts a task's tags into their storage representation.
+     *
+     * @param task the task whose tags should be formatted.
+     * @return the comma-separated tags, or {@code -} when the task has no tags.
+     */
+    private String formatTags(Task task) {
+        if (task.getTags().isEmpty()) {
+            return NO_TAGS;
+        }
+        return String.join(TAG_SEPARATOR, task.getTags());
     }
 }

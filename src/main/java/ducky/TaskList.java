@@ -85,7 +85,10 @@ public class TaskList {
     public List<Task> find(String keyword) {
         String normalizedKeyword = keyword.toLowerCase(Locale.ENGLISH);
         return tasks.stream()
-                .filter(task -> task.getDescription().toLowerCase(Locale.ENGLISH).contains(normalizedKeyword))
+                .filter(task -> task.getDescription().toLowerCase(Locale.ENGLISH).contains(normalizedKeyword)
+                        || task.getTags().stream()
+                                .map(tag -> "#" + tag)
+                                .anyMatch(tag -> tag.contains(normalizedKeyword)))
                 .collect(Collectors.toList());
     }
 }

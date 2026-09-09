@@ -2,6 +2,7 @@ package ducky;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -22,7 +23,19 @@ public class Event extends Task {
      * @param end the event end time.
      */
     public Event(String description, LocalDateTime start, LocalDateTime end) {
-        super(description);
+        this(description, start, end, List.of());
+    }
+
+    /**
+     * Creates an event task with the given description, time range, and tags.
+     *
+     * @param description the description of the task.
+     * @param start the event start time.
+     * @param end the event end time.
+     * @param tags the tags associated with the task.
+     */
+    public Event(String description, LocalDateTime start, LocalDateTime end, List<String> tags) {
+        super(description, tags);
         assert start != null : "An event must have a start time";
         assert end != null : "An event must have an end time";
         assert !end.isBefore(start) : "An event cannot end before it starts";

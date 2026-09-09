@@ -2,6 +2,7 @@ package ducky;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -18,7 +19,18 @@ public class Deadline extends Task {
      * @param by the due date.
      */
     public Deadline(String description, LocalDate by) {
-        super(description);
+        this(description, by, List.of());
+    }
+
+    /**
+     * Creates a deadline task with the given description, due date, and tags.
+     *
+     * @param description the description of the task.
+     * @param by the due date.
+     * @param tags the tags associated with the task.
+     */
+    public Deadline(String description, LocalDate by, List<String> tags) {
+        super(description, tags);
         assert by != null : "A deadline must have a due date";
         this.by = by;
     }
