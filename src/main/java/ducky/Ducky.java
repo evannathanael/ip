@@ -112,30 +112,74 @@ public class Ducky {
             case FIND:
                 return ui.showMatchingTasks(tasks.find(parsedCommand.getKeyword()));
             case ADD:
-                tasks.add(parsedCommand.getTask());
-                String taskAddedMessage = ui.showTaskAdded(parsedCommand.getTask(), tasks.size());
-                storage.save(tasks);
-                return taskAddedMessage;
+                return addTask(parsedCommand.getTask());
             case MARK:
-                Task taskToMark = getTask(parsedCommand.getTaskIndex());
-                taskToMark.markAsDone();
-                String taskMarkedMessage = ui.showTaskMarkedAsDone(taskToMark);
-                storage.save(tasks);
-                return taskMarkedMessage;
+                return markTask(parsedCommand.getTaskIndex());
             case UNMARK:
-                Task taskToUnmark = getTask(parsedCommand.getTaskIndex());
-                taskToUnmark.unmark();
-                String taskUnmarkedMessage = ui.showTaskUnmarked(taskToUnmark);
-                storage.save(tasks);
-                return taskUnmarkedMessage;
+                return unmarkTask(parsedCommand.getTaskIndex());
             case DELETE:
-                Task deletedTask = tasks.delete(parsedCommand.getTaskIndex());
-                String taskDeletedMessage = ui.showTaskDeleted(deletedTask, tasks.size());
-                storage.save(tasks);
-                return taskDeletedMessage;
+                return deleteTask(parsedCommand.getTaskIndex());
             default:
                 throw new DuckyException("I didn't get what you said 🐥");
         }
+    }
+
+    /**
+     * Adds a task and saves the updated task list.
+     *
+     * @param task the task to add.
+     * @return the task-added message.
+     * @throws DuckyException if the updated task list cannot be saved.
+     */
+    private String addTask(Task task) throws DuckyException {
+        tasks.add(task);
+        String response = ui.showTaskAdded(task, tasks.size());
+        storage.save(tasks);
+        return response;
+    }
+
+    /**
+     * Marks a task as done and saves the updated task list.
+     *
+     * @param index the zero-based index of the task to mark.
+     * @return the task-marked message.
+     * @throws DuckyException if the task does not exist or the updated task list cannot be saved.
+     */
+    private String markTask(int index) throws DuckyException {
+        Task task = getTask(index);
+        task.markAsDone();
+        String response = ui.showTaskMarkedAsDone(task);
+        storage.save(tasks);
+        return response;
+    }
+
+    /**
+     * Marks a task as incomplete and saves the updated task list.
+     *
+     * @param index the zero-based index of the task to unmark.
+     * @return the task-unmarked message.
+     * @throws DuckyException if the task does not exist or the updated task list cannot be saved.
+     */
+    private String unmarkTask(int index) throws DuckyException {
+        Task task = getTask(index);
+        task.unmark();
+        String response = ui.showTaskUnmarked(task);
+        storage.save(tasks);
+        return response;
+    }
+
+    /**
+     * Deletes a task and saves the updated task list.
+     *
+     * @param index the zero-based index of the task to delete.
+     * @return the task-deleted message.
+     * @throws DuckyException if the updated task list cannot be saved.
+     */
+    private String deleteTask(int index) throws DuckyException {
+        Task deletedTask = tasks.delete(index);
+        String response = ui.showTaskDeleted(deletedTask, tasks.size());
+        storage.save(tasks);
+        return response;
     }
 
     /**
