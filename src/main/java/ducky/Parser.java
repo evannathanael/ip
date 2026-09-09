@@ -176,7 +176,13 @@ public class Parser {
      * Represents the type of a parsed command.
      */
     public enum CommandType {
-        ADD, MARK, UNMARK, DELETE, LIST, FIND, BYE
+        ADD,
+        MARK,
+        UNMARK,
+        DELETE,
+        LIST,
+        FIND,
+        BYE
     }
 
     /**
