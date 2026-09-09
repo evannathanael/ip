@@ -134,6 +134,7 @@ public class Ducky {
                 storage.save(tasks);
                 return taskDeletedMessage;
             default:
+                assert false : "Every parsed command type must be handled";
                 throw new DuckyException("I didn't get what you said 🐥");
         }
     }

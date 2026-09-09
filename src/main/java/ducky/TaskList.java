@@ -24,6 +24,7 @@ public class TaskList {
      * @param tasks the initial tasks.
      */
     public TaskList(List<Task> tasks) {
+        assert tasks != null : "A task list must have a source collection";
         this.tasks = new ArrayList<>(tasks);
     }
 
@@ -33,6 +34,7 @@ public class TaskList {
      * @param task the task to add.
      */
     public void add(Task task) {
+        assert task != null : "A task list cannot contain a null task";
         tasks.add(task);
     }
 
