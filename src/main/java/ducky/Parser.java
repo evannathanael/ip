@@ -9,6 +9,23 @@ import java.time.format.DateTimeParseException;
  * Parses user commands into structured commands for Ducky.
  */
 public class Parser {
+    private static final String BYE_COMMAND = "bye";
+    private static final String LIST_COMMAND = "list";
+    private static final String FIND_COMMAND = "find";
+    private static final String FIND_COMMAND_PREFIX = FIND_COMMAND + " ";
+    private static final String MARK_COMMAND_PREFIX = "mark ";
+    private static final String UNMARK_COMMAND_PREFIX = "unmark ";
+    private static final String DELETE_COMMAND_PREFIX = "delete ";
+    private static final String TODO_COMMAND = "todo";
+    private static final String TODO_COMMAND_PREFIX = TODO_COMMAND + " ";
+    private static final String DEADLINE_COMMAND = "deadline";
+    private static final String DEADLINE_COMMAND_PREFIX = DEADLINE_COMMAND + " ";
+    private static final String EVENT_COMMAND = "event";
+    private static final String EVENT_COMMAND_PREFIX = EVENT_COMMAND + " ";
+    private static final String DEADLINE_MARKER = " /by ";
+    private static final String EVENT_START_MARKER = " /from ";
+    private static final String EVENT_END_MARKER = " /to ";
+
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm");
 
@@ -20,31 +37,31 @@ public class Parser {
      * @throws DuckyException if the command is invalid.
      */
     public ParsedCommand parse(String command) throws DuckyException {
-        if ("bye".equals(command)) {
+        if (BYE_COMMAND.equals(command)) {
             return new ParsedCommand(CommandType.BYE);
         }
-        if ("list".equals(command)) {
+        if (LIST_COMMAND.equals(command)) {
             return new ParsedCommand(CommandType.LIST);
         }
-        if ("find".equals(command) || command.startsWith("find ")) {
+        if (FIND_COMMAND.equals(command) || command.startsWith(FIND_COMMAND_PREFIX)) {
             return new ParsedCommand(CommandType.FIND, parseFindKeyword(command));
         }
-        if (command.startsWith("mark ")) {
-            return new ParsedCommand(CommandType.MARK, parseTaskNumber(command, "mark "));
+        if (command.startsWith(MARK_COMMAND_PREFIX)) {
+            return new ParsedCommand(CommandType.MARK, parseTaskNumber(command, MARK_COMMAND_PREFIX));
         }
-        if (command.startsWith("unmark ")) {
-            return new ParsedCommand(CommandType.UNMARK, parseTaskNumber(command, "unmark "));
+        if (command.startsWith(UNMARK_COMMAND_PREFIX)) {
+            return new ParsedCommand(CommandType.UNMARK, parseTaskNumber(command, UNMARK_COMMAND_PREFIX));
         }
-        if (command.startsWith("delete ")) {
-            return new ParsedCommand(CommandType.DELETE, parseTaskNumber(command, "delete "));
+        if (command.startsWith(DELETE_COMMAND_PREFIX)) {
+            return new ParsedCommand(CommandType.DELETE, parseTaskNumber(command, DELETE_COMMAND_PREFIX));
         }
-        if ("todo".equals(command) || command.startsWith("todo ")) {
+        if (TODO_COMMAND.equals(command) || command.startsWith(TODO_COMMAND_PREFIX)) {
             return new ParsedCommand(CommandType.ADD, parseTodo(command));
         }
-        if ("deadline".equals(command) || command.startsWith("deadline ")) {
+        if (DEADLINE_COMMAND.equals(command) || command.startsWith(DEADLINE_COMMAND_PREFIX)) {
             return new ParsedCommand(CommandType.ADD, parseDeadline(command));
         }
-        if ("event".equals(command) || command.startsWith("event ")) {
+        if (EVENT_COMMAND.equals(command) || command.startsWith(EVENT_COMMAND_PREFIX)) {
             return new ParsedCommand(CommandType.ADD, parseEvent(command));
         }
         throw new DuckyException("I didn't get what you said 🐥");
@@ -58,7 +75,7 @@ public class Parser {
      * @throws DuckyException if the description is empty.
      */
     private Task parseTodo(String command) throws DuckyException {
-        String description = command.substring("todo".length()).trim();
+        String description = command.substring(TODO_COMMAND.length()).trim();
         if (description.isEmpty()) {
             throw new DuckyException("To do task is empty! 🐥");
         }
@@ -73,7 +90,7 @@ public class Parser {
      * @throws DuckyException if the keyword is empty
      */
     private String parseFindKeyword(String command) throws DuckyException {
-        String keyword = command.substring("find".length()).trim();
+        String keyword = command.substring(FIND_COMMAND.length()).trim();
         if (keyword.isEmpty()) {
             throw new DuckyException("Please provide a keyword to find 🐥");
         }
@@ -88,14 +105,14 @@ public class Parser {
      * @throws DuckyException if the command or date is invalid.
      */
     private Task parseDeadline(String command) throws DuckyException {
-        String commandWithoutPrefix = command.substring("deadline".length()).trim();
-        int markerIndex = commandWithoutPrefix.indexOf(" /by ");
+        String commandWithoutPrefix = command.substring(DEADLINE_COMMAND.length()).trim();
+        int markerIndex = commandWithoutPrefix.indexOf(DEADLINE_MARKER);
         if (markerIndex == -1) {
             throw new DuckyException("A deadline must include '/by' followed by a date 🐥");
         }
 
         String description = commandWithoutPrefix.substring(0, markerIndex).trim();
-        String dateText = commandWithoutPrefix.substring(markerIndex + " /by ".length()).trim();
+        String dateText = commandWithoutPrefix.substring(markerIndex + DEADLINE_MARKER.length()).trim();
         if (description.isEmpty()) {
             throw new DuckyException("A deadline description cannot be empty 🐥");
         }
@@ -118,9 +135,9 @@ public class Parser {
      * @throws DuckyException if the command or times are invalid.
      */
     private Task parseEvent(String command) throws DuckyException {
-        String commandWithoutPrefix = command.substring("event".length()).trim();
-        int fromIndex = commandWithoutPrefix.indexOf(" /from ");
-        int toIndex = commandWithoutPrefix.indexOf(" /to ");
+        String commandWithoutPrefix = command.substring(EVENT_COMMAND.length()).trim();
+        int fromIndex = commandWithoutPrefix.indexOf(EVENT_START_MARKER);
+        int toIndex = commandWithoutPrefix.indexOf(EVENT_END_MARKER);
         if (fromIndex == -1 || toIndex == -1) {
             throw new DuckyException("An event must include both '/from' and '/to' 🐥");
         }
@@ -130,8 +147,8 @@ public class Parser {
 
         String description = commandWithoutPrefix.substring(0, fromIndex).trim();
         String startText = commandWithoutPrefix.substring(
-                fromIndex + " /from ".length(), toIndex).trim();
-        String endText = commandWithoutPrefix.substring(toIndex + " /to ".length()).trim();
+                fromIndex + EVENT_START_MARKER.length(), toIndex).trim();
+        String endText = commandWithoutPrefix.substring(toIndex + EVENT_END_MARKER.length()).trim();
         if (description.isEmpty()) {
             throw new DuckyException("An event description cannot be empty 🐥");
         }
