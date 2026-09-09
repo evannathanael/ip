@@ -128,6 +128,16 @@ class TaskTest {
     }
 
 
+    // Tests tag display and removal of duplicate tags.
+    @Test
+    void constructor_duplicateTags_uniqueTagsDisplayed() {
+        Task task = new Task("watch movie", List.of("fun", "weekend", "fun"));
+
+        assertEquals(List.of("fun", "weekend"), task.getTags());
+        assertEquals("[ ] watch movie #fun #weekend", task.toString());
+    }
+
+
     // Tests that searching is case-insensitive and returns matching tasks in their original order.
     @Test
     void find_keywordMatchingDescriptions_matchingTasksReturned() {
@@ -141,5 +151,18 @@ class TaskTest {
         assertEquals(2, matchingTasks.size());
         assertEquals("Read a book", matchingTasks.get(0).getDescription());
         assertEquals("Return the BOOK", matchingTasks.get(1).getDescription());
+    }
+
+
+    // Tests searching for a task by tag.
+    @Test
+    void find_keywordMatchingTag_matchingTaskReturned() {
+        Task taggedTask = new ToDo("Watch movie", List.of("fun"));
+        TaskList tasks = new TaskList(List.of(
+                taggedTask,
+                new ToDo("Buy groceries", List.of("errands"))));
+
+        assertEquals(List.of(taggedTask), tasks.find("#FUN"));
+        assertEquals(List.of(taggedTask), tasks.find("fun"));
     }
 }

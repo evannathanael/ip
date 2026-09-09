@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
@@ -55,6 +56,17 @@ class ParserTest {
     }
 
 
+    // Tests extraction, normalization, and deduplication of tags from a to-do description.
+    @Test
+    void parse_todoWithTags_descriptionAndUniqueTagsReturned() throws DuckyException {
+        Parser.ParsedCommand parsed = parser.parse("todo watch movie #Fun #weekend #fun");
+
+        ToDo task = assertInstanceOf(ToDo.class, parsed.getTask());
+        assertEquals("watch movie", task.getDescription());
+        assertEquals(List.of("fun", "weekend"), task.getTags());
+    }
+
+
     // Tests parsing a deadline's description and due date.
     @Test
     void parse_deadlineCommand_dateAndDescriptionParsed() throws DuckyException {
@@ -63,6 +75,18 @@ class ParserTest {
         Deadline task = assertInstanceOf(Deadline.class, parsed.getTask());
         assertEquals("submit report", task.getDescription());
         assertEquals(LocalDate.of(2026, 9, 1), task.getBy());
+    }
+
+
+    // Tests extraction of a tag from a deadline description.
+    @Test
+    void parse_deadlineWithTag_descriptionDateAndTagReturned() throws DuckyException {
+        Parser.ParsedCommand parsed = parser.parse(
+                "deadline submit report /by 2026-09-01 #school");
+
+        Deadline task = assertInstanceOf(Deadline.class, parsed.getTask());
+        assertEquals("submit report", task.getDescription());
+        assertEquals(List.of("school"), task.getTags());
     }
 
 
@@ -76,6 +100,18 @@ class ParserTest {
         assertEquals("team meeting", task.getDescription());
         assertEquals(LocalDateTime.of(2026, 9, 1, 9, 0), task.getStart());
         assertEquals(LocalDateTime.of(2026, 9, 1, 10, 30), task.getEnd());
+    }
+
+
+    // Tests extraction of a tag from an event description.
+    @Test
+    void parse_eventWithTag_descriptionTimesAndTagReturned() throws DuckyException {
+        Parser.ParsedCommand parsed = parser.parse(
+                "event team meeting /from 2026-09-01 0900 /to 2026-09-01 1030 #work");
+
+        Event task = assertInstanceOf(Event.class, parsed.getTask());
+        assertEquals("team meeting", task.getDescription());
+        assertEquals(List.of("work"), task.getTags());
     }
 
 
@@ -106,6 +142,7 @@ class ParserTest {
     @Test
     void parse_incompleteStructuredCommand_exceptionThrown() {
         assertThrows(DuckyException.class, () -> parser.parse("todo"));
+        assertThrows(DuckyException.class, () -> parser.parse("todo #fun"));
         assertThrows(DuckyException.class, () -> parser.parse("deadline submit report"));
         assertThrows(DuckyException.class, () -> parser.parse("event meeting /from 2026-09-01 0900"));
     }

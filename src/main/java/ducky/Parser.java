@@ -4,6 +4,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.List;
+import java.util.Locale;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Parses user commands into structured commands for Ducky.
@@ -25,6 +29,10 @@ public class Parser {
     private static final String DEADLINE_MARKER = " /by ";
     private static final String EVENT_START_MARKER = " /from ";
     private static final String EVENT_END_MARKER = " /to ";
+    private static final String MULTIPLE_WHITESPACE_REGEX = "\\s{2,}";
+
+    private static final Pattern TAG_PATTERN =
+            Pattern.compile("(?<!\\S)#([A-Za-z0-9][A-Za-z0-9_-]*)");
 
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm");
@@ -75,11 +83,13 @@ public class Parser {
      * @throws DuckyException if the description is empty.
      */
     private Task parseTodo(String command) throws DuckyException {
-        String description = command.substring(TODO_COMMAND.length()).trim();
+        String rawDescription = command.substring(TODO_COMMAND.length()).trim();
+        List<String> tags = extractTags(rawDescription);
+        String description = removeTags(rawDescription);
         if (description.isEmpty()) {
             throw new DuckyException("To do task is empty! 🐥");
         }
-        return new ToDo(description);
+        return new ToDo(description, tags);
     }
 
     /**
@@ -105,7 +115,9 @@ public class Parser {
      * @throws DuckyException if the command or date is invalid.
      */
     private Task parseDeadline(String command) throws DuckyException {
-        String commandWithoutPrefix = command.substring(DEADLINE_COMMAND.length()).trim();
+        String rawCommandWithoutPrefix = command.substring(DEADLINE_COMMAND.length()).trim();
+        List<String> tags = extractTags(rawCommandWithoutPrefix);
+        String commandWithoutPrefix = removeTags(rawCommandWithoutPrefix);
         int markerIndex = commandWithoutPrefix.indexOf(DEADLINE_MARKER);
         if (markerIndex == -1) {
             throw new DuckyException("A deadline must include '/by' followed by a date 🐥");
@@ -121,7 +133,7 @@ public class Parser {
         }
 
         try {
-            return new Deadline(description, LocalDate.parse(dateText, DATE_FORMAT));
+            return new Deadline(description, LocalDate.parse(dateText, DATE_FORMAT), tags);
         } catch (DateTimeParseException e) {
             throw new DuckyException("Please enter the deadline in yyyy-MM-dd format 🐥");
         }
@@ -135,7 +147,9 @@ public class Parser {
      * @throws DuckyException if the command or times are invalid.
      */
     private Task parseEvent(String command) throws DuckyException {
-        String commandWithoutPrefix = command.substring(EVENT_COMMAND.length()).trim();
+        String rawCommandWithoutPrefix = command.substring(EVENT_COMMAND.length()).trim();
+        List<String> tags = extractTags(rawCommandWithoutPrefix);
+        String commandWithoutPrefix = removeTags(rawCommandWithoutPrefix);
         int fromIndex = commandWithoutPrefix.indexOf(EVENT_START_MARKER);
         int toIndex = commandWithoutPrefix.indexOf(EVENT_END_MARKER);
         if (fromIndex == -1 || toIndex == -1) {
@@ -162,10 +176,37 @@ public class Parser {
         try {
             LocalDateTime start = LocalDateTime.parse(startText, DATE_TIME_FORMAT);
             LocalDateTime end = LocalDateTime.parse(endText, DATE_TIME_FORMAT);
-            return new Event(description, start, end);
+            return new Event(description, start, end, tags);
         } catch (DateTimeParseException e) {
             throw new DuckyException("Please enter event times in yyyy-MM-dd HHmm format 🐥");
         }
+    }
+
+    /**
+     * Extracts unique tags from task text in their original order.
+     *
+     * @param text the task text containing optional hashtags.
+     * @return the normalized tags without {@code #} prefixes.
+     */
+    private List<String> extractTags(String text) {
+        return TAG_PATTERN.matcher(text)
+                .results()
+                .map(result -> result.group(1).toLowerCase(Locale.ENGLISH))
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Removes tags from task text and normalizes leftover whitespace.
+     *
+     * @param text the task text containing optional hashtags.
+     * @return the task text without tags.
+     */
+    private String removeTags(String text) {
+        return TAG_PATTERN.matcher(text)
+                .replaceAll("")
+                .replaceAll(MULTIPLE_WHITESPACE_REGEX, " ")
+                .trim();
     }
 
     /**
