@@ -38,31 +38,31 @@ public class Parser {
      */
     public ParsedCommand parse(String command) throws DuckyException {
         if (BYE_COMMAND.equals(command)) {
-            return new ParsedCommand(CommandType.BYE);
+            return ParsedCommand.createByeCommand();
         }
         if (LIST_COMMAND.equals(command)) {
-            return new ParsedCommand(CommandType.LIST);
+            return ParsedCommand.createListCommand();
         }
         if (FIND_COMMAND.equals(command) || command.startsWith(FIND_COMMAND_PREFIX)) {
-            return new ParsedCommand(CommandType.FIND, parseFindKeyword(command));
+            return ParsedCommand.createFindCommand(parseFindKeyword(command));
         }
         if (command.startsWith(MARK_COMMAND_PREFIX)) {
-            return new ParsedCommand(CommandType.MARK, parseTaskNumber(command, MARK_COMMAND_PREFIX));
+            return ParsedCommand.createMarkCommand(parseTaskNumber(command, MARK_COMMAND_PREFIX));
         }
         if (command.startsWith(UNMARK_COMMAND_PREFIX)) {
-            return new ParsedCommand(CommandType.UNMARK, parseTaskNumber(command, UNMARK_COMMAND_PREFIX));
+            return ParsedCommand.createUnmarkCommand(parseTaskNumber(command, UNMARK_COMMAND_PREFIX));
         }
         if (command.startsWith(DELETE_COMMAND_PREFIX)) {
-            return new ParsedCommand(CommandType.DELETE, parseTaskNumber(command, DELETE_COMMAND_PREFIX));
+            return ParsedCommand.createDeleteCommand(parseTaskNumber(command, DELETE_COMMAND_PREFIX));
         }
         if (TODO_COMMAND.equals(command) || command.startsWith(TODO_COMMAND_PREFIX)) {
-            return new ParsedCommand(CommandType.ADD, parseTodo(command));
+            return ParsedCommand.createAddCommand(parseTodo(command));
         }
         if (DEADLINE_COMMAND.equals(command) || command.startsWith(DEADLINE_COMMAND_PREFIX)) {
-            return new ParsedCommand(CommandType.ADD, parseDeadline(command));
+            return ParsedCommand.createAddCommand(parseDeadline(command));
         }
         if (EVENT_COMMAND.equals(command) || command.startsWith(EVENT_COMMAND_PREFIX)) {
-            return new ParsedCommand(CommandType.ADD, parseEvent(command));
+            return ParsedCommand.createAddCommand(parseEvent(command));
         }
         throw new DuckyException("I didn't get what you said 🐥");
     }
@@ -200,55 +200,46 @@ public class Parser {
      * Represents a parsed command and its optional argument.
      */
     public static class ParsedCommand {
+        private static final int NO_TASK_INDEX = -1;
+
         private final CommandType type;
         private final Task task;
         private final String keyword;
         private final int taskIndex;
-
-        /**
-         * Creates a command without a task or task index.
-         *
-         * @param type the command type.
-         */
-        public ParsedCommand(CommandType type) {
-            this(type, null, null, -1);
-        }
-
-        /**
-         * Creates an add command.
-         *
-         * @param type the command type.
-         * @param task the task argument.
-         */
-        public ParsedCommand(CommandType type, Task task) {
-            this(type, task, null, -1);
-        }
-
-        /**
-         * Creates a find command.
-         *
-         * @param type the command type.
-         * @param keyword the search keyword.
-         */
-        public ParsedCommand(CommandType type, String keyword) {
-            this(type, null, keyword, -1);
-        }
-
-        /**
-         * Creates a mark, unmark, or delete command.
-         *
-         * @param type the command type.
-         * @param taskIndex the zero-based task index.
-         */
-        public ParsedCommand(CommandType type, int taskIndex) {
-            this(type, null, null, taskIndex);
-        }
 
         private ParsedCommand(CommandType type, Task task, String keyword, int taskIndex) {
             this.type = type;
             this.task = task;
             this.keyword = keyword;
             this.taskIndex = taskIndex;
+        }
+
+        private static ParsedCommand createByeCommand() {
+            return new ParsedCommand(CommandType.BYE, null, null, NO_TASK_INDEX);
+        }
+
+        private static ParsedCommand createListCommand() {
+            return new ParsedCommand(CommandType.LIST, null, null, NO_TASK_INDEX);
+        }
+
+        private static ParsedCommand createFindCommand(String keyword) {
+            return new ParsedCommand(CommandType.FIND, null, keyword, NO_TASK_INDEX);
+        }
+
+        private static ParsedCommand createAddCommand(Task task) {
+            return new ParsedCommand(CommandType.ADD, task, null, NO_TASK_INDEX);
+        }
+
+        private static ParsedCommand createMarkCommand(int taskIndex) {
+            return new ParsedCommand(CommandType.MARK, null, null, taskIndex);
+        }
+
+        private static ParsedCommand createUnmarkCommand(int taskIndex) {
+            return new ParsedCommand(CommandType.UNMARK, null, null, taskIndex);
+        }
+
+        private static ParsedCommand createDeleteCommand(int taskIndex) {
+            return new ParsedCommand(CommandType.DELETE, null, null, taskIndex);
         }
 
         /**
