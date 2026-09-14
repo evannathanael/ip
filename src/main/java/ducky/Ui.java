@@ -11,11 +11,7 @@ import java.util.stream.IntStream;
  */
 public class Ui {
     private static final String LINE = "____________________________________________________________";
-    private static final String BANNER = " ____  _   _  ____ _  ____   __\n"
-            + "|  _ \\| | | |/ ___| |/ /\\ \\ / /\n"
-            + "| | | | | | | |   | ' /  \\ V / \n"
-            + "| |_| | |_| | |___| . \\   | |  \n"
-            + "|____/ \\___/ \\____|_|\\_\\  |_|  \n";
+    private static final String BANNER = "🐥 𝗗𝗨𝗖𝗞𝗬 🐥\n";
 
     private final Scanner scanner;
 
