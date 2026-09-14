@@ -91,4 +91,18 @@ public class DialogBox extends HBox {
         dialogBox.dialog.getStyleClass().add("error-label");
         return dialogBox;
     }
+
+    /**
+     * Creates a successful-action dialog box for a message from Ducky.
+     *
+     * @param text the response text.
+     * @param img Ducky's display picture.
+     * @return the successful-action dialog box.
+     */
+    public static DialogBox getSuccessDialog(String text, Image img) {
+        DialogBox dialogBox = getDuckyDialog(text, img);
+        dialogBox.dialog.getStyleClass().remove("ducky-label");
+        dialogBox.dialog.getStyleClass().add("success-label");
+        return dialogBox;
+    }
 }
