@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane maxHeight="Infinity" maxWidth="Infinity" minHeight="220" minWidth="417"
+<AnchorPane maxHeight="Infinity" maxWidth="Infinity" minHeight="470" minWidth="417"
             xmlns="http://javafx.com/javafx/17" fx:controller="ducky.MainWindow"
             xmlns:fx="http://javafx.com/fxml/1" styleClass="root-pane">
     <children>
@@ -16,7 +16,7 @@
                     AnchorPane.bottomAnchor="55.0" AnchorPane.leftAnchor="1.0"
                     AnchorPane.rightAnchor="1.0" AnchorPane.topAnchor="1.0">
             <content>
-                <VBox fx:id="dialogContainer" spacing="10" styleClass="dialog-container">
+                <VBox fx:id="dialogContainer" fillWidth="true" spacing="10" styleClass="dialog-container">
                     <padding>
                         <Insets top="10" right="10" bottom="10" left="10"/>
                     </padding>

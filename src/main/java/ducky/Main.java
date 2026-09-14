@@ -28,6 +28,9 @@ public class Main extends Application {
             scene.getStylesheets().add(Main.class.getResource("/view/main.css").toExternalForm());
             stage.setScene(scene);
             stage.setTitle("Ducky");
+            stage.setWidth(600);
+            stage.setHeight(700);
+            stage.setResizable(true);
             stage.setMinWidth(417);
             stage.setMinHeight(470);
             fxmlLoader.<MainWindow>getController().setDucky(ducky);

@@ -36,6 +36,7 @@ public class DialogBox extends HBox {
         dialog.setText(text);
         displayPicture.setImage(img);
         dialog.getStyleClass().add("user-label");
+        dialog.maxWidthProperty().bind(widthProperty().subtract(55));
     }
 
     /**
