@@ -146,4 +146,42 @@ class ParserTest {
         assertThrows(DuckyException.class, () -> parser.parse("deadline submit report"));
         assertThrows(DuckyException.class, () -> parser.parse("event meeting /from 2026-09-01 0900"));
     }
+
+    @Test
+    void parse_nullOrBlankCommand_exceptionThrown() {
+        assertThrows(DuckyException.class, () -> parser.parse(null));
+        assertThrows(DuckyException.class, () -> parser.parse("   "));
+    }
+
+    @Test
+    void parse_commandWithOuterWhitespace_commandParsed() throws DuckyException {
+        assertEquals(Parser.CommandType.LIST, parser.parse("  list  ").getType());
+    }
+
+    @Test
+    void parse_invalidDeadlineDate_exceptionThrown() {
+        assertThrows(DuckyException.class,
+                () -> parser.parse("deadline submit report /by 2026-02-30"));
+    }
+
+    @Test
+    void parse_duplicateDeadlineMarker_exceptionThrown() {
+        assertThrows(DuckyException.class,
+                () -> parser.parse("deadline submit report /by 2026-09-01 /by 2026-09-02"));
+    }
+
+    @Test
+    void parse_invalidEventRange_exceptionThrown() {
+        assertThrows(DuckyException.class,
+                () -> parser.parse("event meeting /from 2026-09-01 1000 /to 2026-09-01 1000"));
+        assertThrows(DuckyException.class,
+                () -> parser.parse("event meeting /from 2026-09-01 1100 /to 2026-09-01 1000"));
+    }
+
+    @Test
+    void parse_duplicateEventMarker_exceptionThrown() {
+        assertThrows(DuckyException.class,
+                () -> parser.parse("event meeting /from 2026-09-01 0900 "
+                        + "/from 2026-09-01 1000 /to 2026-09-01 1100"));
+    }
 }

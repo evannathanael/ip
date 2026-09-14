@@ -2,6 +2,7 @@ package ducky;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
@@ -56,5 +57,39 @@ class StorageTest {
         assertEquals("Read book", loadedTask.getDescription());
         assertTrue(loadedTask.isDone());
         assertTrue(loadedTask.getTags().isEmpty());
+    }
+
+    @Test
+    void load_invalidStatus_exceptionThrown() throws IOException {
+        Path dataFile = temporaryDirectory.resolve("invalid-status.txt");
+        Files.writeString(dataFile, "T | 2 | Read book | -\n");
+
+        assertThrows(DuckyException.class, () -> new Storage(dataFile.toString()).load());
+    }
+
+    @Test
+    void load_invalidEventRange_exceptionThrown() throws IOException {
+        Path dataFile = temporaryDirectory.resolve("invalid-event.txt");
+        Files.writeString(dataFile,
+                "E | 0 | Meeting | 2026-09-01T10:00 | 2026-09-01T10:00 | -\n");
+
+        assertThrows(DuckyException.class, () -> new Storage(dataFile.toString()).load());
+    }
+
+    @Test
+    void load_duplicateTasks_exceptionThrown() throws IOException {
+        Path dataFile = temporaryDirectory.resolve("duplicate-tasks.txt");
+        Files.writeString(dataFile,
+                "T | 0 | Read book | -\nT | 1 | Read book | -\n");
+
+        assertThrows(DuckyException.class, () -> new Storage(dataFile.toString()).load());
+    }
+
+    @Test
+    void load_emptyDescription_exceptionThrown() throws IOException {
+        Path dataFile = temporaryDirectory.resolve("empty-description.txt");
+        Files.writeString(dataFile, "T | 0 |    | -\n");
+
+        assertThrows(DuckyException.class, () -> new Storage(dataFile.toString()).load());
     }
 }
