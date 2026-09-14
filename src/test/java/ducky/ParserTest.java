@@ -160,28 +160,27 @@ class ParserTest {
 
     @Test
     void parse_invalidDeadlineDate_exceptionThrown() {
-        assertThrows(DuckyException.class,
-                () -> parser.parse("deadline submit report /by 2026-02-30"));
+        assertInvalidCommand("deadline submit report /by 2026-02-30");
     }
 
     @Test
     void parse_duplicateDeadlineMarker_exceptionThrown() {
-        assertThrows(DuckyException.class,
-                () -> parser.parse("deadline submit report /by 2026-09-01 /by 2026-09-02"));
+        assertInvalidCommand("deadline submit report /by 2026-09-01 /by 2026-09-02");
     }
 
     @Test
     void parse_invalidEventRange_exceptionThrown() {
-        assertThrows(DuckyException.class,
-                () -> parser.parse("event meeting /from 2026-09-01 1000 /to 2026-09-01 1000"));
-        assertThrows(DuckyException.class,
-                () -> parser.parse("event meeting /from 2026-09-01 1100 /to 2026-09-01 1000"));
+        assertInvalidCommand("event meeting /from 2026-09-01 1000 /to 2026-09-01 1000");
+        assertInvalidCommand("event meeting /from 2026-09-01 1100 /to 2026-09-01 1000");
     }
 
     @Test
     void parse_duplicateEventMarker_exceptionThrown() {
-        assertThrows(DuckyException.class,
-                () -> parser.parse("event meeting /from 2026-09-01 0900 "
-                        + "/from 2026-09-01 1000 /to 2026-09-01 1100"));
+        assertInvalidCommand("event meeting /from 2026-09-01 0900 "
+                + "/from 2026-09-01 1000 /to 2026-09-01 1100");
+    }
+
+    private void assertInvalidCommand(String command) {
+        assertThrows(DuckyException.class, () -> parser.parse(command));
     }
 }
