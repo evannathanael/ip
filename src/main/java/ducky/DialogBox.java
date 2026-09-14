@@ -13,6 +13,7 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.shape.Circle;
 
 /**
  * A chat bubble showing a speaker's display picture next to their message.
@@ -35,7 +36,9 @@ public class DialogBox extends HBox {
 
         dialog.setText(text);
         displayPicture.setImage(img);
+        displayPicture.setClip(new Circle(22.5, 22.5, 22.5));
         dialog.getStyleClass().add("user-label");
+        dialog.maxWidthProperty().bind(widthProperty().subtract(55));
     }
 
     /**
@@ -72,6 +75,20 @@ public class DialogBox extends HBox {
     public static DialogBox getDuckyDialog(String text, Image img) {
         DialogBox dialogBox = new DialogBox(text, img);
         dialogBox.flip();
+        return dialogBox;
+    }
+
+    /**
+     * Creates an error dialog box for a message from Ducky.
+     *
+     * @param text the error message text.
+     * @param img Ducky's display picture.
+     * @return the error dialog box.
+     */
+    public static DialogBox getErrorDialog(String text, Image img) {
+        DialogBox dialogBox = getDuckyDialog(text, img);
+        dialogBox.dialog.getStyleClass().remove("ducky-label");
+        dialogBox.dialog.getStyleClass().add("error-label");
         return dialogBox;
     }
 }

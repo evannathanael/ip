@@ -27,8 +27,8 @@ public class MainWindow {
 
     private Ducky ducky;
 
-    private final Image userImage = new Image(getClass().getResourceAsStream("/images/DaUser.png"));
-    private final Image duckyImage = new Image(getClass().getResourceAsStream("/images/DaDucky.png"));
+    private final Image userImage = new Image(getClass().getResourceAsStream("/images/DaUser.jpg"));
+    private final Image duckyImage = new Image(getClass().getResourceAsStream("/images/DaDucky.jpg"));
 
     /**
      * Binds the scroll pane to always show the newest message.
@@ -60,9 +60,12 @@ public class MainWindow {
         }
 
         String response = ducky.getResponse(input);
+        DialogBox responseDialog = ducky.lastResponseWasError()
+                ? DialogBox.getErrorDialog(response, duckyImage)
+                : DialogBox.getDuckyDialog(response, duckyImage);
         dialogContainer.getChildren().addAll(
                 DialogBox.getUserDialog(input, userImage),
-                DialogBox.getDuckyDialog(response, duckyImage)
+                responseDialog
         );
         userInput.clear();
 
