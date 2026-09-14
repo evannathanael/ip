@@ -77,6 +77,32 @@ public class TaskList {
     }
 
     /**
+     * Returns whether this list already contains a task with the same details.
+     *
+     * @param candidate the task to compare against existing tasks.
+     * @return {@code true} if an equivalent task exists, otherwise {@code false}.
+     */
+    public boolean containsEquivalent(Task candidate) {
+        return tasks.stream().anyMatch(task -> isEquivalent(task, candidate));
+    }
+
+    private boolean isEquivalent(Task first, Task second) {
+        if (!first.getClass().equals(second.getClass())
+                || !first.getDescription().equals(second.getDescription())
+                || !first.getTags().equals(second.getTags())) {
+            return false;
+        }
+        if (first instanceof Deadline firstDeadline && second instanceof Deadline secondDeadline) {
+            return firstDeadline.getBy().equals(secondDeadline.getBy());
+        }
+        if (first instanceof Event firstEvent && second instanceof Event secondEvent) {
+            return firstEvent.getStart().equals(secondEvent.getStart())
+                    && firstEvent.getEnd().equals(secondEvent.getEnd());
+        }
+        return true;
+    }
+
+    /**
      * Returns tasks whose descriptions contain the given keyword, ignoring letter case.
      *
      * @param keyword the keyword to search for.
