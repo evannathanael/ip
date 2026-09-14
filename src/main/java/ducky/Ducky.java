@@ -190,6 +190,7 @@ public class Ducky {
      * @throws DuckyException if the updated task list cannot be saved.
      */
     private String deleteTask(int index) throws DuckyException {
+        getTask(index);
         Task deletedTask = tasks.delete(index);
         String response = ui.showTaskDeleted(deletedTask, tasks.size());
         storage.save(tasks);

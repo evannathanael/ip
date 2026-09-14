@@ -34,7 +34,8 @@ public class Ui {
     public String showWelcome() {
         return LINE + "\n" + BANNER + "\n"
                 + "Hello! I'm Ducky 🐥\n"
-                + "What can I do for you?\n"
+                + "🐥 Quack! I’m ready to help you keep your tasks in order.\n"
+                + "What would you like to do?\n"
                 + LINE;
     }
 
@@ -53,7 +54,7 @@ public class Ui {
      * @return the exit message.
      */
     public String showExitMessage() {
-        return LINE + "\n" + "Bye. Hope to see you again soon!" + "\n" + LINE;
+        return LINE + "\n" + "🐥 Quack! Goodbye! See you in the pond soon!" + "\n" + LINE;
     }
 
     /**
@@ -65,7 +66,7 @@ public class Ui {
      */
     public String showTaskAdded(Task task, int taskCount) {
         return LINE + "\n"
-                + "Got it. I've added this task:\n"
+                + "🐥 Quack! I’ve added this task to your pond:\n"
                 + "  " + task + "\n"
                 + String.format("Now you have %d tasks in the list.", taskCount) + "\n"
                 + LINE;
@@ -81,7 +82,7 @@ public class Ui {
         String taskLines = IntStream.range(0, tasks.size())
                 .mapToObj(index -> String.format("%d.%s\n", index + 1, tasks.get(index)))
                 .collect(Collectors.joining());
-        return LINE + "\n" + "Here are the tasks in your list:\n" + taskLines + LINE;
+        return LINE + "\n" + "🐥 Here are all the tasks swimming in your pond:\n" + taskLines + LINE;
     }
 
     /**
@@ -94,7 +95,7 @@ public class Ui {
         String taskLines = IntStream.range(0, matchingTasks.size())
                 .mapToObj(index -> String.format("%d.%s\n", index + 1, matchingTasks.get(index)))
                 .collect(Collectors.joining());
-        return LINE + "\n" + "Here are the matching tasks in your list:\n" + taskLines + LINE;
+        return LINE + "\n" + "🐥 Here are the tasks matching your search:\n" + taskLines + LINE;
     }
 
     /**
@@ -105,7 +106,7 @@ public class Ui {
      */
     public String showTaskMarkedAsDone(Task task) {
         return LINE + "\n"
-                + "Nice! I've marked this task as done:\n"
+                + "🐥 Nice quack! This task is complete:\n"
                 + "  " + task + "\n"
                 + LINE;
     }
@@ -118,7 +119,7 @@ public class Ui {
      */
     public String showTaskUnmarked(Task task) {
         return LINE + "\n"
-                + "OK, I've marked this task as not done yet:\n"
+                + "🐥 No worries — this task is back in the pond:\n"
                 + "  " + task + "\n"
                 + LINE;
     }
@@ -132,7 +133,7 @@ public class Ui {
      */
     public String showTaskDeleted(Task task, int taskCount) {
         return LINE + "\n"
-                + "Noted. I've removed this task:\n"
+                + "🐥 Quack! I’ve removed this task from your pond:\n"
                 + "  " + task + "\n"
                 + String.format("Now you have %d tasks in the list.", taskCount) + "\n"
                 + LINE;
@@ -145,6 +146,6 @@ public class Ui {
      * @return the formatted error message.
      */
     public String showError(String message) {
-        return LINE + "\n" + "QUACK! " + message + "\n" + LINE;
+        return LINE + "\n" + "🐥 QUACK! " + message + "\n" + LINE;
     }
 }

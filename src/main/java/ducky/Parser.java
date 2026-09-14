@@ -26,9 +26,9 @@ public class Parser {
     private static final String DEADLINE_COMMAND_PREFIX = DEADLINE_COMMAND + " ";
     private static final String EVENT_COMMAND = "event";
     private static final String EVENT_COMMAND_PREFIX = EVENT_COMMAND + " ";
-    private static final String DEADLINE_MARKER = " /by ";
-    private static final String EVENT_START_MARKER = " /from ";
-    private static final String EVENT_END_MARKER = " /to ";
+    private static final String DEADLINE_MARKER = "/by";
+    private static final String EVENT_START_MARKER = "/from";
+    private static final String EVENT_END_MARKER = "/to";
     private static final String MULTIPLE_WHITESPACE_REGEX = "\\s{2,}";
 
     private static final Pattern TAG_PATTERN =
@@ -126,7 +126,7 @@ public class Parser {
         String description = commandWithoutPrefix.substring(0, markerIndex).trim();
         String dateText = commandWithoutPrefix.substring(markerIndex + DEADLINE_MARKER.length()).trim();
         if (description.isEmpty()) {
-            throw new DuckyException("A deadline description cannot be empty 🐥");
+            throw new DuckyException("Please provide a name for your deadline.");
         }
         if (dateText.isEmpty()) {
             throw new DuckyException("A deadline must include a date after '/by' 🐥");
