@@ -67,14 +67,18 @@ public class Storage {
         }
 
         try {
-            List<Task> tasks = new ArrayList<>();
+            TaskList tasks = new TaskList();
             for (String line : Files.readAllLines(filePath)) {
                 if (!line.isBlank()) {
-                    tasks.add(parseTask(line));
+                    Task task = parseTask(line);
+                    if (tasks.containsEquivalent(task)) {
+                        throw new DuckyException("Sorry, your save file contains duplicate tasks 🐥");
+                    }
+                    tasks.add(task);
                 }
             }
-            return tasks;
-        } catch (IOException e) {
+            return tasks.getTasks();
+        } catch (IOException | SecurityException e) {
             throw new DuckyException("Sorry, I could not load your saved tasks 🐥");
         }
     }
@@ -97,7 +101,7 @@ public class Storage {
                 lines.add(formatTask(task));
             }
             Files.write(filePath, lines);
-        } catch (IOException e) {
+        } catch (IOException | SecurityException e) {
             throw new DuckyException("Sorry, I could not save your tasks 🐥");
         }
     }
@@ -146,6 +150,7 @@ public class Storage {
             throw new DuckyException("Sorry, your save file contains invalid todo data 🐥");
         }
         List<String> tags = parseTags(fields, TODO_TAGS_FIELD_INDEX);
+        validateDescription(fields[DESCRIPTION_FIELD_INDEX]);
         return new ToDo(fields[DESCRIPTION_FIELD_INDEX], tags);
     }
 
@@ -162,6 +167,7 @@ public class Storage {
         }
         try {
             String description = fields[DESCRIPTION_FIELD_INDEX];
+            validateDescription(description);
             LocalDate deadline = LocalDate.parse(fields[DEADLINE_DATE_FIELD_INDEX]);
             List<String> tags = parseTags(fields, DEADLINE_TAGS_FIELD_INDEX);
             return new Deadline(description, deadline, tags);
@@ -183,12 +189,22 @@ public class Storage {
         }
         try {
             String description = fields[DESCRIPTION_FIELD_INDEX];
+            validateDescription(description);
             LocalDateTime start = LocalDateTime.parse(fields[EVENT_START_FIELD_INDEX]);
             LocalDateTime end = LocalDateTime.parse(fields[EVENT_END_FIELD_INDEX]);
+            if (!end.isAfter(start)) {
+                throw new DuckyException("Sorry, your save file contains an invalid event time range 🐥");
+            }
             List<String> tags = parseTags(fields, EVENT_TAGS_FIELD_INDEX);
             return new Event(description, start, end, tags);
         } catch (DateTimeParseException e) {
             throw new DuckyException("Sorry, your save file contains invalid event times 🐥");
+        }
+    }
+
+    private void validateDescription(String description) throws DuckyException {
+        if (description.isBlank()) {
+            throw new DuckyException("Sorry, your save file contains an empty task description 🐥");
         }
     }
 

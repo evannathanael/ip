@@ -146,6 +146,9 @@ public class Ducky {
      * @throws DuckyException if the updated task list cannot be saved.
      */
     private String addTask(Task task) throws DuckyException {
+        if (tasks.containsEquivalent(task)) {
+            throw new DuckyException("That task is already in your pond 🐥");
+        }
         tasks.add(task);
         String response = ui.showTaskAdded(task, tasks.size());
         storage.save(tasks);

@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
@@ -34,8 +35,12 @@ public class Parser {
     private static final Pattern TAG_PATTERN =
             Pattern.compile("(?<!\\S)#([A-Za-z0-9][A-Za-z0-9_-]*)");
 
-    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-    private static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm");
+    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter
+            .ofPattern("uuuu-MM-dd")
+            .withResolverStyle(ResolverStyle.STRICT);
+    private static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter
+            .ofPattern("uuuu-MM-dd HHmm")
+            .withResolverStyle(ResolverStyle.STRICT);
 
     /**
      * Parses a complete user command.
@@ -45,6 +50,10 @@ public class Parser {
      * @throws DuckyException if the command is invalid.
      */
     public ParsedCommand parse(String command) throws DuckyException {
+        if (command == null || command.isBlank()) {
+            throw new DuckyException("Please enter a command 🐥");
+        }
+        command = command.trim();
         if (BYE_COMMAND.equals(command)) {
             return ParsedCommand.createByeCommand();
         }
@@ -122,6 +131,9 @@ public class Parser {
         if (markerIndex == -1) {
             throw new DuckyException("A deadline must include '/by' followed by a date 🐥");
         }
+        if (commandWithoutPrefix.indexOf(DEADLINE_MARKER, markerIndex + DEADLINE_MARKER.length()) != -1) {
+            throw new DuckyException("A deadline can only include one '/by' marker 🐥");
+        }
 
         String description = commandWithoutPrefix.substring(0, markerIndex).trim();
         String dateText = commandWithoutPrefix.substring(markerIndex + DEADLINE_MARKER.length()).trim();
@@ -155,6 +167,12 @@ public class Parser {
         if (fromIndex == -1 || toIndex == -1) {
             throw new DuckyException("An event must include both '/from' and '/to' 🐥");
         }
+        if (commandWithoutPrefix.indexOf(EVENT_START_MARKER, fromIndex + EVENT_START_MARKER.length()) != -1) {
+            throw new DuckyException("An event can only include one '/from' marker 🐥");
+        }
+        if (commandWithoutPrefix.indexOf(EVENT_END_MARKER, toIndex + EVENT_END_MARKER.length()) != -1) {
+            throw new DuckyException("An event can only include one '/to' marker 🐥");
+        }
         if (fromIndex > toIndex) {
             throw new DuckyException("'/from' must appear before '/to' 🐥");
         }
@@ -176,6 +194,9 @@ public class Parser {
         try {
             LocalDateTime start = LocalDateTime.parse(startText, DATE_TIME_FORMAT);
             LocalDateTime end = LocalDateTime.parse(endText, DATE_TIME_FORMAT);
+            if (!end.isAfter(start)) {
+                throw new DuckyException("An event must end after it starts 🐥");
+            }
             return new Event(description, start, end, tags);
         } catch (DateTimeParseException e) {
             throw new DuckyException("Please enter event times in yyyy-MM-dd HHmm format 🐥");
