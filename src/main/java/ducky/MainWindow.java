@@ -60,9 +60,12 @@ public class MainWindow {
         }
 
         String response = ducky.getResponse(input);
+        DialogBox responseDialog = ducky.lastResponseWasError()
+                ? DialogBox.getErrorDialog(response, duckyImage)
+                : DialogBox.getDuckyDialog(response, duckyImage);
         dialogContainer.getChildren().addAll(
                 DialogBox.getUserDialog(input, userImage),
-                DialogBox.getDuckyDialog(response, duckyImage)
+                responseDialog
         );
         userInput.clear();
 

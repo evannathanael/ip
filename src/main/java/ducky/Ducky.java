@@ -11,6 +11,7 @@ public class Ducky {
     private final Ui ui;
     private final Parser parser;
     private boolean isExit;
+    private boolean lastResponseWasError;
 
     /**
      * Creates a chatbot using the default data file.
@@ -78,10 +79,22 @@ public class Ducky {
      */
     public String getResponse(String input) {
         try {
-            return processCommand(input);
+            String response = processCommand(input);
+            lastResponseWasError = false;
+            return response;
         } catch (DuckyException e) {
+            lastResponseWasError = true;
             return ui.showError(e.getMessage());
         }
+    }
+
+    /**
+     * Returns whether the most recent GUI command produced an error.
+     *
+     * @return {@code true} if the most recent response is an error, otherwise {@code false}.
+     */
+    public boolean lastResponseWasError() {
+        return lastResponseWasError;
     }
 
     /**

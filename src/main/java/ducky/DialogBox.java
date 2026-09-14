@@ -74,4 +74,18 @@ public class DialogBox extends HBox {
         dialogBox.flip();
         return dialogBox;
     }
+
+    /**
+     * Creates an error dialog box for a message from Ducky.
+     *
+     * @param text the error message text.
+     * @param img Ducky's display picture.
+     * @return the error dialog box.
+     */
+    public static DialogBox getErrorDialog(String text, Image img) {
+        DialogBox dialogBox = getDuckyDialog(text, img);
+        dialogBox.dialog.getStyleClass().remove("ducky-label");
+        dialogBox.dialog.getStyleClass().add("error-label");
+        return dialogBox;
+    }
 }
