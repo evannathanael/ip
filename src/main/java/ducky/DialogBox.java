@@ -13,6 +13,7 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.shape.Circle;
 
 /**
  * A chat bubble showing a speaker's display picture next to their message.
@@ -35,6 +36,7 @@ public class DialogBox extends HBox {
 
         dialog.setText(text);
         displayPicture.setImage(img);
+        displayPicture.setClip(new Circle(22.5, 22.5, 22.5));
         dialog.getStyleClass().add("user-label");
         dialog.maxWidthProperty().bind(widthProperty().subtract(55));
     }
