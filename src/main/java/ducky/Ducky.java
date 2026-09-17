@@ -4,7 +4,7 @@ package ducky;
  * Coordinates the user interface, command parser, task list, and storage.
  */
 public class Ducky {
-    private static final String DATA_FILE_PATH = "data/duke.txt";
+    private static final String DATA_FILE_PATH = "data/ducky.txt";
 
     private final Storage storage;
     private final TaskList tasks;
@@ -134,7 +134,7 @@ public class Ducky {
                 return deleteTask(parsedCommand.getTaskIndex());
             default:
                 assert false : "Every parsed command type must be handled";
-                throw new DuckyException("I didn't get what you said 🐥");
+                throw new DuckyException("I didn't get what you said.");
         }
     }
 
@@ -147,7 +147,7 @@ public class Ducky {
      */
     private String addTask(Task task) throws DuckyException {
         if (tasks.containsEquivalent(task)) {
-            throw new DuckyException("That task is already in your pond 🐥");
+            throw new DuckyException("That task is already in your pond.");
         }
         tasks.add(task);
         String response = ui.showTaskAdded(task, tasks.size());
@@ -209,7 +209,7 @@ public class Ducky {
      */
     private Task getTask(int index) throws DuckyException {
         if (index < 0 || index >= tasks.size()) {
-            throw new DuckyException("That task number does not exist 🐥");
+            throw new DuckyException("That task number does not exist.");
         }
         return tasks.get(index);
     }

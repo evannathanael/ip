@@ -131,7 +131,7 @@ Format: `bye`
 Ducky saves changes after every add, mark, unmark, and delete command. Saved tasks are loaded automatically the
 next time Ducky starts. No manual save command is needed.
 
-The data file is located at `data/duke.txt`, relative to the folder from which Ducky is launched. Avoid editing
+The data file is located at `data/ducky.txt`, relative to the folder from which Ducky is launched. Avoid editing
 this file manually because invalid content may prevent the saved tasks from loading.
 
 ### Understanding message colors
@@ -149,7 +149,7 @@ The window can be resized, and messages wrap to fit the available width.
 
 **Q: How do I transfer my tasks to another computer?**
 
-A: Copy `data/duke.txt` to the same relative location beside the Ducky application on the other computer.
+A: Copy `data/ducky.txt` to the same relative location beside the Ducky application on the other computer.
 
 **Q: What should I do if Ducky reports that it cannot load or save tasks?**
 

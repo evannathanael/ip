@@ -148,6 +148,13 @@ class ParserTest {
     }
 
     @Test
+    void parse_deadlineWithoutNameOrDate_fullFormatShown() {
+        DuckyException exception = assertThrows(DuckyException.class, () -> parser.parse("deadline /by"));
+
+        assertEquals("Please use: deadline <name> /by <date>", exception.getMessage());
+    }
+
+    @Test
     void parse_nullOrBlankCommand_exceptionThrown() {
         assertThrows(DuckyException.class, () -> parser.parse(null));
         assertThrows(DuckyException.class, () -> parser.parse("   "));

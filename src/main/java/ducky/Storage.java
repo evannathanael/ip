@@ -72,14 +72,14 @@ public class Storage {
                 if (!line.isBlank()) {
                     Task task = parseTask(line);
                     if (tasks.containsEquivalent(task)) {
-                        throw new DuckyException("Sorry, your save file contains duplicate tasks 🐥");
+                        throw new DuckyException("Sorry, your save file contains duplicate tasks.");
                     }
                     tasks.add(task);
                 }
             }
             return tasks.getTasks();
         } catch (IOException | SecurityException e) {
-            throw new DuckyException("Sorry, I could not load your saved tasks 🐥");
+            throw new DuckyException("Sorry, I could not load your saved tasks.");
         }
     }
 
@@ -102,7 +102,7 @@ public class Storage {
             }
             Files.write(filePath, lines);
         } catch (IOException | SecurityException e) {
-            throw new DuckyException("Sorry, I could not save your tasks 🐥");
+            throw new DuckyException("Sorry, I could not save your tasks.");
         }
     }
 
@@ -116,7 +116,7 @@ public class Storage {
     private Task parseTask(String line) throws DuckyException {
         String[] fields = line.split(FIELD_SEPARATOR_REGEX, -1);
         if (fields.length < MINIMUM_FIELD_COUNT) {
-            throw new DuckyException("Sorry, your save file contains invalid task data 🐥");
+            throw new DuckyException("Sorry, your save file contains invalid task data.");
         }
 
         Task task;
@@ -131,7 +131,7 @@ public class Storage {
                 task = parseEventTask(fields);
                 break;
             default:
-                throw new DuckyException("Sorry, your save file contains an unknown task type 🐥");
+                throw new DuckyException("Sorry, your save file contains an unknown task type.");
         }
 
         restoreCompletionStatus(task, fields[STATUS_FIELD_INDEX]);
@@ -147,7 +147,7 @@ public class Storage {
      */
     private Task parseTodoTask(String[] fields) throws DuckyException {
         if (fields.length != LEGACY_TODO_FIELD_COUNT && fields.length != TODO_FIELD_COUNT) {
-            throw new DuckyException("Sorry, your save file contains invalid todo data 🐥");
+            throw new DuckyException("Sorry, your save file contains invalid todo data.");
         }
         List<String> tags = parseTags(fields, TODO_TAGS_FIELD_INDEX);
         validateDescription(fields[DESCRIPTION_FIELD_INDEX]);
@@ -163,7 +163,7 @@ public class Storage {
      */
     private Task parseDeadlineTask(String[] fields) throws DuckyException {
         if (fields.length != LEGACY_DEADLINE_FIELD_COUNT && fields.length != DEADLINE_FIELD_COUNT) {
-            throw new DuckyException("Sorry, your save file contains invalid deadline data 🐥");
+            throw new DuckyException("Sorry, your save file contains invalid deadline data.");
         }
         try {
             String description = fields[DESCRIPTION_FIELD_INDEX];
@@ -172,7 +172,7 @@ public class Storage {
             List<String> tags = parseTags(fields, DEADLINE_TAGS_FIELD_INDEX);
             return new Deadline(description, deadline, tags);
         } catch (DateTimeParseException e) {
-            throw new DuckyException("Sorry, your save file contains an invalid deadline date 🐥");
+            throw new DuckyException("Sorry, your save file contains an invalid deadline date.");
         }
     }
 
@@ -185,7 +185,7 @@ public class Storage {
      */
     private Task parseEventTask(String[] fields) throws DuckyException {
         if (fields.length != LEGACY_EVENT_FIELD_COUNT && fields.length != EVENT_FIELD_COUNT) {
-            throw new DuckyException("Sorry, your save file contains invalid event data 🐥");
+            throw new DuckyException("Sorry, your save file contains invalid event data.");
         }
         try {
             String description = fields[DESCRIPTION_FIELD_INDEX];
@@ -193,18 +193,18 @@ public class Storage {
             LocalDateTime start = LocalDateTime.parse(fields[EVENT_START_FIELD_INDEX]);
             LocalDateTime end = LocalDateTime.parse(fields[EVENT_END_FIELD_INDEX]);
             if (!end.isAfter(start)) {
-                throw new DuckyException("Sorry, your save file contains an invalid event time range 🐥");
+                throw new DuckyException("Sorry, your save file contains an invalid event time range.");
             }
             List<String> tags = parseTags(fields, EVENT_TAGS_FIELD_INDEX);
             return new Event(description, start, end, tags);
         } catch (DateTimeParseException e) {
-            throw new DuckyException("Sorry, your save file contains invalid event times 🐥");
+            throw new DuckyException("Sorry, your save file contains invalid event times.");
         }
     }
 
     private void validateDescription(String description) throws DuckyException {
         if (description.isBlank()) {
-            throw new DuckyException("Sorry, your save file contains an empty task description 🐥");
+            throw new DuckyException("Sorry, your save file contains an empty task description.");
         }
     }
 
@@ -258,7 +258,7 @@ public class Storage {
             return String.join(FIELD_SEPARATOR, EVENT_TYPE, status,
                     task.getDescription(), event.getStart().toString(), event.getEnd().toString(), tags);
         }
-        throw new DuckyException("Sorry, I could not save an unsupported task type 🐥");
+        throw new DuckyException("Sorry, I could not save an unsupported task type.");
     }
 
     /**

@@ -1,5 +1,6 @@
 package ducky;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
@@ -14,8 +15,9 @@ class UiTest {
     void showWelcome_containsDuckyPersonality() {
         String message = ui.showWelcome();
 
-        assertTrue(message.contains("Ducky 🐥"));
+        assertTrue(message.contains("Ducky"));
         assertTrue(message.contains("ready to help"));
+        assertFalse(message.contains("____"));
     }
 
     @Test
@@ -25,6 +27,10 @@ class UiTest {
 
     @Test
     void showError_containsErrorPrefix() {
-        assertTrue(ui.showError("invalid command").contains("QUACK! invalid command"));
+        String message = ui.showError("invalid command");
+
+        assertTrue(message.contains("QUACK! invalid command"));
+        assertFalse(message.contains("____"));
+        assertFalse(message.contains("🐥"));
     }
 }

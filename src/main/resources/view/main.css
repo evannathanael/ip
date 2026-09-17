@@ -16,6 +16,19 @@
     -fx-font-size: 13px;
 }
 
+.welcome-heading {
+    -fx-fill: #3a3a3a;
+    -fx-font-weight: bold;
+}
+
+.welcome-body {
+    -fx-fill: #3a3a3a;
+}
+
+.ducky-label, .success-label, .error-label {
+    -fx-pref-width: 300;
+}
+
 .user-label {
     -fx-background-color: #4a90d9;
     -fx-text-fill: white;
@@ -41,6 +54,7 @@
 }
 
 .user-input {
+    -fx-pref-height: 34;
     -fx-background-radius: 16;
     -fx-background-color: white;
     -fx-border-color: #4a90d9;
@@ -49,6 +63,7 @@
 }
 
 .send-button {
+    -fx-pref-height: 34;
     -fx-background-color: #4a90d9;
     -fx-text-fill: white;
     -fx-font-weight: bold;

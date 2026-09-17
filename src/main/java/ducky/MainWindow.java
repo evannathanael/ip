@@ -45,7 +45,7 @@ public class MainWindow {
      */
     public void setDucky(Ducky ducky) {
         this.ducky = ducky;
-        dialogContainer.getChildren().add(DialogBox.getDuckyDialog(ducky.getWelcomeMessage(), duckyImage));
+        dialogContainer.getChildren().add(DialogBox.getWelcomeDialog(ducky.getWelcomeMessage(), duckyImage));
     }
 
     /**

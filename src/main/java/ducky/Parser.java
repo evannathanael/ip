@@ -51,7 +51,7 @@ public class Parser {
      */
     public ParsedCommand parse(String command) throws DuckyException {
         if (command == null || command.isBlank()) {
-            throw new DuckyException("Please enter a command 🐥");
+            throw new DuckyException("Please enter a command.");
         }
         command = command.trim();
         if (BYE_COMMAND.equals(command)) {
@@ -81,7 +81,7 @@ public class Parser {
         if (EVENT_COMMAND.equals(command) || command.startsWith(EVENT_COMMAND_PREFIX)) {
             return ParsedCommand.createAddCommand(parseEvent(command));
         }
-        throw new DuckyException("I didn't get what you said 🐥");
+        throw new DuckyException("I didn't get what you said.");
     }
 
     /**
@@ -96,7 +96,7 @@ public class Parser {
         List<String> tags = extractTags(rawDescription);
         String description = removeTags(rawDescription);
         if (description.isEmpty()) {
-            throw new DuckyException("To do task is empty! 🐥");
+            throw new DuckyException("Please use: todo <name>");
         }
         return new ToDo(description, tags);
     }
@@ -111,7 +111,7 @@ public class Parser {
     private String parseFindKeyword(String command) throws DuckyException {
         String keyword = command.substring(FIND_COMMAND.length()).trim();
         if (keyword.isEmpty()) {
-            throw new DuckyException("Please provide a keyword to find 🐥");
+            throw new DuckyException("Please provide a keyword to find.");
         }
         return keyword;
     }
@@ -129,25 +129,25 @@ public class Parser {
         String commandWithoutPrefix = removeTags(rawCommandWithoutPrefix);
         int markerIndex = commandWithoutPrefix.indexOf(DEADLINE_MARKER);
         if (markerIndex == -1) {
-            throw new DuckyException("A deadline must include '/by' followed by a date 🐥");
+            throw new DuckyException("Please use: deadline <name> /by <date>");
         }
         if (commandWithoutPrefix.indexOf(DEADLINE_MARKER, markerIndex + DEADLINE_MARKER.length()) != -1) {
-            throw new DuckyException("A deadline can only include one '/by' marker 🐥");
+            throw new DuckyException("A deadline can only include one '/by' marker.");
         }
 
         String description = commandWithoutPrefix.substring(0, markerIndex).trim();
         String dateText = commandWithoutPrefix.substring(markerIndex + DEADLINE_MARKER.length()).trim();
         if (description.isEmpty()) {
-            throw new DuckyException("Please provide a name for your deadline.");
+            throw new DuckyException("Please use: deadline <name> /by <date>");
         }
         if (dateText.isEmpty()) {
-            throw new DuckyException("A deadline must include a date after '/by' 🐥");
+            throw new DuckyException("Please use: deadline <name> /by <date>");
         }
 
         try {
             return new Deadline(description, LocalDate.parse(dateText, DATE_FORMAT), tags);
         } catch (DateTimeParseException e) {
-            throw new DuckyException("Please enter the deadline in yyyy-MM-dd format 🐥");
+            throw new DuckyException("Please enter the deadline in yyyy-MM-dd format.");
         }
     }
 
@@ -165,16 +165,16 @@ public class Parser {
         int fromIndex = commandWithoutPrefix.indexOf(EVENT_START_MARKER);
         int toIndex = commandWithoutPrefix.indexOf(EVENT_END_MARKER);
         if (fromIndex == -1 || toIndex == -1) {
-            throw new DuckyException("An event must include both '/from' and '/to' 🐥");
+            throw new DuckyException("An event must include both '/from' and '/to'.");
         }
         if (commandWithoutPrefix.indexOf(EVENT_START_MARKER, fromIndex + EVENT_START_MARKER.length()) != -1) {
-            throw new DuckyException("An event can only include one '/from' marker 🐥");
+            throw new DuckyException("An event can only include one '/from' marker.");
         }
         if (commandWithoutPrefix.indexOf(EVENT_END_MARKER, toIndex + EVENT_END_MARKER.length()) != -1) {
-            throw new DuckyException("An event can only include one '/to' marker 🐥");
+            throw new DuckyException("An event can only include one '/to' marker.");
         }
         if (fromIndex > toIndex) {
-            throw new DuckyException("'/from' must appear before '/to' 🐥");
+            throw new DuckyException("'/from' must appear before '/to'.");
         }
 
         String description = commandWithoutPrefix.substring(0, fromIndex).trim();
@@ -182,24 +182,24 @@ public class Parser {
                 fromIndex + EVENT_START_MARKER.length(), toIndex).trim();
         String endText = commandWithoutPrefix.substring(toIndex + EVENT_END_MARKER.length()).trim();
         if (description.isEmpty()) {
-            throw new DuckyException("An event description cannot be empty 🐥");
+            throw new DuckyException("An event description cannot be empty.");
         }
         if (startText.isEmpty()) {
-            throw new DuckyException("An event must include a start time after '/from' 🐥");
+            throw new DuckyException("An event must include a start time after '/from'.");
         }
         if (endText.isEmpty()) {
-            throw new DuckyException("An event must include an end time after '/to' 🐥");
+            throw new DuckyException("An event must include an end time after '/to'.");
         }
 
         try {
             LocalDateTime start = LocalDateTime.parse(startText, DATE_TIME_FORMAT);
             LocalDateTime end = LocalDateTime.parse(endText, DATE_TIME_FORMAT);
             if (!end.isAfter(start)) {
-                throw new DuckyException("An event must end after it starts 🐥");
+                throw new DuckyException("An event must end after it starts.");
             }
             return new Event(description, start, end, tags);
         } catch (DateTimeParseException e) {
-            throw new DuckyException("Please enter event times in yyyy-MM-dd HHmm format 🐥");
+            throw new DuckyException("Please enter event times in yyyy-MM-dd HHmm format.");
         }
     }
 
@@ -243,11 +243,11 @@ public class Parser {
         try {
             int taskNumber = Integer.parseInt(numberText);
             if (taskNumber < 1) {
-                throw new DuckyException("That task number does not exist 🐥");
+                throw new DuckyException("That task number does not exist.");
             }
             return taskNumber - 1;
         } catch (NumberFormatException e) {
-            throw new DuckyException("Please enter a valid task number 🐥");
+            throw new DuckyException("Please enter a valid task number.");
         }
     }
 
